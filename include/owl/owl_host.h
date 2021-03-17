@@ -16,9 +16,8 @@
 
 #pragma once
 
-#include <cuda.h>
-#include <driver_types.h>
-#include <optix.h>
+#include <fake/cuda.h>
+#include <fake/optix.h>
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -67,9 +66,9 @@
 
 
 
-#define OWL_OFFSETOF(type,member)               \
-  ((char *)(&((struct type *)0)-> member )      \
-   -                                            \
+#define OWL_OFFSETOF(type,member)                       \
+   (uint32_t)((char *)(&((struct type *)0)-> member )   \
+   -                                                    \
    (char *)(((struct type *)0)))
   
   

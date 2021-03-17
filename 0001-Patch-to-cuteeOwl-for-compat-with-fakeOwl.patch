@@ -1,0 +1,209 @@
+From 9d049fef9a4a3ccc24c220045df5d41b865c8f97 Mon Sep 17 00:00:00 2001
+From: Stefan Zellmann <info@szellmann.de>
+Date: Fri, 26 Mar 2021 02:15:32 +0100
+Subject: [PATCH] Patch to cuteeOwl for compat with fakeOwl
+
+---
+ CMakeLists.txt        | 14 ++++++++------
+ apps/sample.cpp       | 15 +++++++++------
+ qtOWL/AlphaEditor.cpp |  2 +-
+ qtOWL/CMakeLists.txt  |  2 ++
+ qtOWL/ColorMaps.cpp   |  2 +-
+ qtOWL/OWLViewer.cpp   | 21 +++++++++++++++------
+ qtOWL/OWLViewer.h     |  3 +--
+ 7 files changed, 37 insertions(+), 22 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 810849c..3fe7800 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,12 +29,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ # ------------------------------------------------------------------
+ # add owl, for vec3f stuff used in viewer
+ # ------------------------------------------------------------------
+-if (NOT (TARGET owl_static))
+-  message("owl hasn't been included yet...")
+-  set(owl_dir ${CMAKE_CURRENT_SOURCE_DIR}/../owl)
+-  add_subdirectory(${owl_dir} external_owl EXCLUDE_FROM_ALL)
+-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${owl_dir}/owl/cmake/")
+-  include(configure_build_type)
++if (NOT ${owl_dir})
++#  message("owl hasn't been included yet...")
++#  set(owl_dir ${CMAKE_CURRENT_SOURCE_DIR}/../owl)
++#  add_subdirectory(${owl_dir} external_owl EXCLUDE_FROM_ALL)
++#  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${owl_dir}/owl/cmake/")
++#  include(configure_build_type)
+ endif()
+ 
+ 
+@@ -54,6 +54,8 @@ set(CMAKE_AUTOMOC ON)
+ 
+ include_directories(${QT_OWL_INCLUDES})
+ 
++find_package(CUDA)
++include_directories(${CUDA_INCLUDE_DIRS})
+ add_executable(sampleViewer
+   apps/sample.cpp
+   )
+diff --git a/apps/sample.cpp b/apps/sample.cpp
+index f622733..53d7331 100644
+--- a/apps/sample.cpp
++++ b/apps/sample.cpp
+@@ -23,11 +23,14 @@
+ #include "QComboBox"
+ // BorderLayout Sample
+ 
+-#include "owlQT/OWLViewer.h"
+-#include "owlQT/TransferFunctionEditor.h"
++#include "qtOWL/OWLViewer.h"
++#include "qtOWL/XFEditor.h"
+ 
+-namespace owlQT {
+-  struct SampleViewer : public owlQT::OWLViewer{
++#include <cuda_runtime.h>
++#include <cuda_gl_interop.h>
++
++namespace qtOWL {
++  struct SampleViewer : public qtOWL::OWLViewer{
+   
+     void render() override
+     {
+@@ -56,7 +59,7 @@ namespace owlQT {
+   
+     void cameraChanged() override
+     {
+-      const owlQT::SimpleCamera camera = getSimplifiedCamera();
++      const qtOWL::SimpleCamera camera = getSimplifiedCamera();
+     }
+   
+   };
+@@ -73,7 +76,7 @@ namespace owlQT {
+     viewer.enableInspectMode(worldBounds);
+ 
+ 
+-    XFEditor    *xfEditor = new XFEditor;
++    XFEditor    *xfEditor = new XFEditor({0.1,1.f});
+     QFormLayout *layout   = new QFormLayout;
+     layout->addWidget(xfEditor);
+     
+diff --git a/qtOWL/AlphaEditor.cpp b/qtOWL/AlphaEditor.cpp
+index 8ba4fdc..b0acf52 100644
+--- a/qtOWL/AlphaEditor.cpp
++++ b/qtOWL/AlphaEditor.cpp
+@@ -77,7 +77,7 @@ namespace qtOWL {
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     glOrtho(0.f, width, 0.f, height, -1000.f, 1000.f);
+-    glViewport(0.f, 0.f, width, height);
++    glViewport(0.f, 0.f, width*2, height*2);
+       
+     glMatrixMode(GL_MODELVIEW);
+     glLoadIdentity();
+diff --git a/qtOWL/CMakeLists.txt b/qtOWL/CMakeLists.txt
+index 64150db..9527946 100644
+--- a/qtOWL/CMakeLists.txt
++++ b/qtOWL/CMakeLists.txt
+@@ -27,6 +27,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ include_directories(${OWL_INCLUDES})
+ find_package(OpenGL REQUIRED)
+ find_package(CUDA REQUIRED)
++include_directories(${CUDA_INCLUDE_DIRS})
+ add_library(qtOWL STATIC
+   OWLViewer.cpp
+   InspectMode.cpp
+@@ -56,5 +57,6 @@ set(QT_OWL_LIBRARIES qtOWL PARENT_SCOPE)
+   
+ macro(QT_OWL_LINK target)
+   target_link_libraries(${target} ${QT_OWL_LIBRARIES})
++  target_link_libraries(${target} ${OPENGL_gl_LIBRARY})
+   qt5_use_modules(${target} Widgets)
+ endmacro()
+diff --git a/qtOWL/ColorMaps.cpp b/qtOWL/ColorMaps.cpp
+index 7fd40fb..2e7cf1e 100644
+--- a/qtOWL/ColorMaps.cpp
++++ b/qtOWL/ColorMaps.cpp
+@@ -17,7 +17,7 @@
+ #include "qtOWL/ColorMaps.h"
+ 
+ #define STB_IMAGE_IMPLEMENTATION 1
+-#include "samples/common/3rdParty/stb/stb_image.h"
++#include "qtOWL/stb/stb_image.h"
+ 
+ namespace qtOWL {
+   
+diff --git a/qtOWL/OWLViewer.cpp b/qtOWL/OWLViewer.cpp
+index 09261bb..1390bde 100644
+--- a/qtOWL/OWLViewer.cpp
++++ b/qtOWL/OWLViewer.cpp
+@@ -26,9 +26,12 @@
+ #include "FlyMode.h"
+ #include <sstream>
+ 
++#include <cuda_runtime.h>
++#include <cuda_gl_interop.h>
++
+ // eventually to go into 'apps/'
+ #define STB_IMAGE_WRITE_IMPLEMENTATION 1
+-#include "samples/common/3rdParty/stb/stb_image_write.h"
++#include "stb/stb_image_write.h"
+ 
+ namespace qtOWL {
+ 
+@@ -182,6 +185,9 @@ namespace qtOWL {
+ 
+   void OWLViewer::resizeGL(int width, int height)
+   {
++    // width *= QApplication::desktop()->devicePixelRatio(); 
++    // height *= QApplication::desktop()->devicePixelRatio(); 
++
+     resize({width,height});
+   }
+ 
+@@ -262,9 +268,12 @@ namespace qtOWL {
+   void OWLViewer::resize(const vec2i &newSize)
+   {
+     // glfwMakeContextCurrent(handle);
++    // if (fbPointer)
++    //   cudaFree(fbPointer);
++    // cudaMallocManaged(&fbPointer,newSize.x*newSize.y*sizeof(uint32_t));
+     if (fbPointer)
+-      cudaFree(fbPointer);
+-    cudaMallocManaged(&fbPointer,newSize.x*newSize.y*sizeof(uint32_t));
++      delete[] fbPointer;
++    fbPointer = new uint32_t[newSize.x*newSize.y*4];
+       
+     fbSize = newSize;
+     // bool firstResize = false;
+@@ -348,12 +357,12 @@ namespace qtOWL {
+ 
+     glEnable(GL_TEXTURE_2D);
+     glBindTexture(GL_TEXTURE_2D, fbTexture);
+-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
++    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
++    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+       
+     glDisable(GL_DEPTH_TEST);
+ 
+-    glViewport(0, 0, fbSize.x, fbSize.y);
++    glViewport(0, 0, fbSize.x*2, fbSize.y*2);
+ 
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+diff --git a/qtOWL/OWLViewer.h b/qtOWL/OWLViewer.h
+index c1657e2..ee881b9 100644
+--- a/qtOWL/OWLViewer.h
++++ b/qtOWL/OWLViewer.h
+@@ -25,8 +25,7 @@
+ #include <QApplication>
+ #include <QMainWindow>
+ 
+-#include <cuda_runtime.h>
+-#include <cuda_gl_interop.h>
++typedef struct cudaGraphicsResource* cudaGraphicsResource_t;
+ 
+ QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram);
+ QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
+-- 
+2.17.0
+
