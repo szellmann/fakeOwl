@@ -3,7 +3,7 @@ fake[Owl](https://github.com/owl-project/owl)
 
 A CPU implementation of OWL. Very experimental :-)
 
-ATM only works on macOS, as my main dev machine is a Mac. I had it running on Linux, too, but 2-3 patches would need to be applied. (At the very least, you'd have to replace `.dylib` with `.so` in `cmake/configure_fake_owl.cmake`, but there's probably 1-2 more changes necessary that I just don't remember rn.)
+ATM only works on macOS, as my main dev machine is a Mac. I had it running on Linux, too, but 2-3 patches would need to be applied. (At the very least, you'd have to replace `.dylib` with `.so` in [cmake/configure_fake_owl.cmake](/cmake/configure_fake_owl.cmake), but there's probably 1-2 more changes necessary that I just don't remember rn.)
 
 For the interactive samples you also need a checkout of [cuteeOwl](https://github.com/owl-project/cuteeOWL). You'd have to place that in the top level dir of fakeOwl. There's a patch I've placed there that you'd have to apply to cuteeOwl. Pretty hacky, I know.
 
@@ -16,7 +16,7 @@ I'm currently only supporting a subset of OWL and adding features only as needed
 
 The following changes are required at the very least:
 
-Replace `owlXXXBufferCreate()` with `owlBufferCreateEXT()` from `owl_ext.h` (uses malloc/free instead of cudaMalloc et al.).
+Replace `owlXXXBufferCreate()` with `owlBufferCreateEXT()` from [owl_ext.h](/include/owl/owl_ext.h) (uses malloc/free instead of cudaMalloc et al.).
 
 In your "device code":
 
@@ -30,7 +30,9 @@ And for launch params declarations, add init parantheses:
 extern "C" __constant__ LaunchParams optixLaunchParams {}; // diff-2 (initialization)
 ```
 
-That's mostly it. _Some_ platform-specific CUDA stuff works, but most (obviously) doesn't. Have a look in the `fake/cuda.h` and `fake/optix.h` files. The OptiX functions should _eventually_ be ported in their entirety but the CUDA stuff is only there for convenience. BTW, there is a `clock64()` implementation in `fake/cuda.h` that you should use instead of `clock()` on x86, as the latter will perform syscalls and is awfully slow (some of the owl samples use `clock()`).
+CMake is a bit different of course. You have to link with libfakeOwl.{a|dylib}, and you want to check out the macro `fake_owl_compile_and_embed` in [cmake/configure_fake_owl.cmake](/cmake/configure_fake_owl.cmake).
+
+That's mostly it. _Some_ platform-specific CUDA stuff works, but most (obviously) doesn't. Have a look in the [fake/cuda.h](/include/fake/cuda.h) and [fake/optix.h](/include/fake/optix.h) files. The OptiX functions should _eventually_ be ported in their entirety but the CUDA stuff is only there for convenience. BTW, there is a `clock64()` implementation in `fake/cuda.h` that you should use instead of `clock()` on x86, as the latter will perform syscalls and is awfully slow (some of the owl samples use `clock()`).
 
 Licence
 -------
