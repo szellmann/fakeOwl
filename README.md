@@ -25,6 +25,8 @@ At the top of the files, add:
 FAKE_OWL_MODULE_DECL // diff-1
 ```
 
+That macro get's pulled in when including either of [owl_device.h](/include/owl/owl_device.h) or [owl.h](/include/owl/owl.h).
+
 And for launch params declarations, add init parentheses:
 ```
 extern "C" __constant__ LaunchParams optixLaunchParams {}; // diff-2 (initialization)
