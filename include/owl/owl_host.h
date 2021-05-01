@@ -18,6 +18,7 @@
 
 #include <fake/cuda.h>
 #include <fake/optix.h>
+#include <fake/version.h>
 
 #include <sys/types.h>
 #include <stdint.h>

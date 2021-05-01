@@ -17,7 +17,7 @@
 #include "GeomTypes.h"
 #include <owl/owl_device.h>
 
-#if 1 // if fakeOwl!
+#ifdef FAKE_OWL_VERSION
 FAKE_OWL_MODULE_DECL // diff-1
 #endif
 

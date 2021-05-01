@@ -4,13 +4,13 @@
 #include "deviceCode.h"
 #include "owl/common/math/random.h"
 
-#if 1 // if fakeOwl!
+#ifdef FAKE_OWL_VERSION
 FAKE_OWL_MODULE_DECL // diff-1
 #endif
 
 namespace dvr
 {
-#if 1 // if fakeOwl!
+#ifdef FAKE_OWL_VERSION
     extern "C" __constant__ LaunchParams optixLaunchParams {}; // diff-2 (initialization)
 #else
     extern "C" __constant__ LaunchParams optixLaunchParams;

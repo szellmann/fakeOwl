@@ -22,6 +22,7 @@
 #include <fake/cuda.h>
 #include <fake/optix.h>
 #include <fake/module_decl.h>
+#include <fake/version.h>
 
 // ==================================================================
 // actual device-side "API" built-ins.
