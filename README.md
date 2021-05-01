@@ -3,7 +3,7 @@ fake[Owl](https://github.com/owl-project/owl)
 
 A CPU implementation of OWL. Very experimental :-)
 
-ATM only works on macOS, as my main dev machine is a Mac. I had it running on Linux, too, but 2-3 patches would need to be applied. (At the very least, you'd have to replace `.dylib` with `.so` in [cmake/configure_fake_owl.cmake](/cmake/configure_fake_owl.cmake), but there's probably 1-2 more changes necessary that I just don't remember rn.)
+ATM only works on macOS, as my main dev machine is a Mac. I had it running on Linux, too, but 2-3 changes would be required. (At the very least, you'd have to replace `.dylib` with `.so` in [cmake/configure_fake_owl.cmake](/cmake/configure_fake_owl.cmake), but there's probably 1-2 more changes necessary that I just don't remember rn.)
 
 For the interactive samples you also need a checkout of [cuteeOwl](https://github.com/owl-project/cuteeOWL). You'd have to place that in the top level dir of fakeOwl. There's a [patch](0001-Patch-to-cuteeOwl-for-compat-with-fakeOwl.patch) I've placed there that you'd have to apply to cuteeOwl. Pretty hacky, I know.
 
