@@ -21,7 +21,7 @@ include(cmake/configure_fake_owl.cmake)
 set(owl_dir ${PROJECT_SOURCE_DIR})
 add_subdirectory(cuteeOwl)
 include_directories(${QT_OWL_INCLUDES})
-find_package(CUDA)
+# find_package(CUDA)
 include_directories(${CUDA_INCLUDE_DIRS})
 fake_owl_compile_and_embed(
   embedded_deviceCode deviceCode.cpp
