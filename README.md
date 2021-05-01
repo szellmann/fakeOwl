@@ -25,7 +25,7 @@ At the top of the files, add:
 FAKE_OWL_MODULE_DECL // diff-1
 ```
 
-And for launch params declarations, add init parantheses:
+And for launch params declarations, add init parentheses:
 ```
 extern "C" __constant__ LaunchParams optixLaunchParams {}; // diff-2 (initialization)
 ```
