@@ -16,6 +16,62 @@ namespace fake
     {
     }
 
+    void RayGen::launch(int dims, Params* params)
+    {
+        using namespace visionaray;
+
+        FAKE_LOG_DBG << "Launching ray gen program with params: " << name << " (dims=" << dims << ')';
+
+        if (!isValid())
+        {
+            FAKE_LOG(fake::logging::Level::Error) << "Cannot launch ray gen program: " << name << " - forgot to call buildPrograms()?!";;
+            return;
+        }
+
+        if (params != nullptr)
+        {
+            void* optixLaunchParams;
+            optixLaunchParams = (void*)module->optixLaunchParamsSym;
+            std::memcpy(optixLaunchParams, params->dataPtr, params->sizeOfVarStruct);
+        }
+
+        // Update all traversables to have a pointer to the current module!
+        traversablesSetCurrentModule(module);
+
+        parallel_for(
+            context->getThreadPool(),
+            tiled_range1d<unsigned>(0, dims, 256),
+            [=](range1d<unsigned> const& r)
+            {
+                void (*entryPoint)();
+                entryPoint = (void (*)())entryPointSym;
+
+                fake::ProgramState* (*fakePrepareRayGen)();
+                fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
+
+                void (*fakeSetLaunchIndex)(int, int, int);
+                fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
+
+                void (*fakeSetLaunchDims)(int, int, int);
+                fakeSetLaunchDims = (void (*)(int, int, int))fakeSetLaunchDimsSym;
+
+
+                fake::ProgramState* state = fakePrepareRayGen();
+                state->sbtPointer = this->dataPtr;
+
+                fakeSetLaunchDims(dims, 1, 1);
+
+                for (unsigned i = r.begin(); i < r.end(); ++i)
+                {
+                    fakeSetLaunchIndex(i, 0, 0);
+                    entryPoint();
+                }
+            }
+            );
+
+        FAKE_LOG_DBG << "Success!";
+    }
+
     void RayGen::launch(int w, int h, Params* params)
     {
         using namespace visionaray;

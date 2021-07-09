@@ -30,5 +30,8 @@ owlTexture3DCreateEXT(OWLContext context,
 
 OWL_API void owlTextureReleaseEXT(OWLTexture texture);
 
+OWL_API void
+owlLaunch1DEXT(OWLRayGen rayGen, int dims,
+               OWLParams params);
 
 

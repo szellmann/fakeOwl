@@ -13,6 +13,8 @@ namespace fake
     public:
         RayGen(std::size_t sizeOfVarStruct, OWLVarDecl* vars, int numVars);
 
+        void launch(int dims, Params* params = nullptr);
+
         void launch(int w, int h, Params* params = nullptr);
 
         std::string entryPointPrefix();

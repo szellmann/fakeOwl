@@ -2,6 +2,7 @@
 #include <owl/owl_ext.h>
 
 #include "Context.h"
+#include "RayGen.h"
 #include "Texture.h"
 
 using namespace fake;
@@ -47,5 +48,13 @@ owlTextureReleaseEXT(OWLTexture texture)
     Context* ctx = tex->getContext();
     ctx->releaseResource(tex);
     texture = nullptr;
+}
+
+OWL_API void
+owlLaunch1DEXT(OWLRayGen rayGen, int dims,
+               OWLParams params)
+{
+    RayGen* rg = (RayGen*)rayGen;
+    rg->launch(dims, (Params*)params);
 }
 
