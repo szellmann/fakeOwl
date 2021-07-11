@@ -5,7 +5,7 @@
 
 #if !defined(__CUDACC__) && !defined(CUDARTAPI)
 
-#define VOWL_CUDA_TYPES 1
+#define FAKE_OWL_CUDA_TYPES 1
 
 #define __global__
 #define __constant__
