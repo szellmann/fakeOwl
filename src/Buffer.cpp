@@ -58,6 +58,11 @@ namespace fake
         std::memcpy(dataPtr, (uint8_t*)hostPtr + offset, sizeInBytes);
     }
 
+    size_t HostBuffer::getSizeInBytes()
+    {
+        return numElems * GetDataTypeInfo(dataType).sizeInBytes;
+    }
+
     const void* HostBuffer::getPointer()
     {
         return dataPtr;

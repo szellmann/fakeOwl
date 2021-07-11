@@ -19,6 +19,7 @@ namespace fake
 
         virtual void resize(std::size_t newNumElems) = 0;
         virtual void upload(const void* hostPtr, std::size_t offset, std::size_t numBytes) = 0;
+        virtual size_t getSizeInBytes() = 0;
         virtual const void* getPointer() = 0;
 
         void* dataPtr = nullptr;
@@ -36,6 +37,7 @@ namespace fake
 
         void resize(std::size_t newNumElems);
         void upload(const void* hostPtr, std::size_t offset, std::size_t numBytes);
+        size_t getSizeInBytes();
         const void* getPointer();
 
     };

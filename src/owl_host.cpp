@@ -170,6 +170,11 @@ owlBufferResize(OWLBuffer buffer,
     buf->resize(newItemCount);
 }
 
+OWL_API size_t
+owlBufferSizeInBytes(OWLBuffer buffer)
+{
+}
+
 OWL_API void
 owlBufferDestroy(OWLBuffer buffer)
 {
