@@ -34,4 +34,10 @@ OWL_API void
 owlLaunch1DEXT(OWLRayGen rayGen, int dims,
                OWLParams params);
 
+/* Set number of attributes for passing data from custom Intersection programs
+   to ClosestHit programs.  Default 2.  Has no effect once programs are built.*/
+OWL_API void
+owlContextSetNumAttributeValuesEXT(OWLContext context,
+                                   size_t numAttributeValues);
+
 

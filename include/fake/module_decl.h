@@ -236,3 +236,181 @@ const bool optixReportIntersection(float    hitT,                               
     fake::intersectionResult.a0 = a0;                                           \
     return wasIntersection;                                                     \
 }                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1,                                 \
+                                   unsigned a2)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    fake::intersectionResult.a2 = a2;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1,                                 \
+                                   unsigned a2,                                 \
+                                   unsigned a3)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    fake::intersectionResult.a2 = a2;                                           \
+    fake::intersectionResult.a3 = a3;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1,                                 \
+                                   unsigned a2,                                 \
+                                   unsigned a3,                                 \
+                                   unsigned a4)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    fake::intersectionResult.a2 = a2;                                           \
+    fake::intersectionResult.a3 = a3;                                           \
+    fake::intersectionResult.a4 = a4;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1,                                 \
+                                   unsigned a2,                                 \
+                                   unsigned a3,                                 \
+                                   unsigned a4,                                 \
+                                   unsigned a5)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    fake::intersectionResult.a2 = a2;                                           \
+    fake::intersectionResult.a3 = a3;                                           \
+    fake::intersectionResult.a4 = a4;                                           \
+    fake::intersectionResult.a5 = a5;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1,                                 \
+                                   unsigned a2,                                 \
+                                   unsigned a3,                                 \
+                                   unsigned a4,                                 \
+                                   unsigned a5,                                 \
+                                   unsigned a6)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    fake::intersectionResult.a2 = a2;                                           \
+    fake::intersectionResult.a3 = a3;                                           \
+    fake::intersectionResult.a4 = a4;                                           \
+    fake::intersectionResult.a6 = a6;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+const bool optixReportIntersection(float    hitT,                               \
+                                   unsigned hitKind,                            \
+                                   unsigned a0,                                 \
+                                   unsigned a1,                                 \
+                                   unsigned a2,                                 \
+                                   unsigned a3,                                 \
+                                   unsigned a4,                                 \
+                                   unsigned a5,                                 \
+                                   unsigned a6,                                 \
+                                   unsigned a7)                                 \
+{                                                                               \
+    bool wasIntersection = true; /* TODO */                                     \
+    fake::intersectionResult.wasHit = 1;                                        \
+    fake::intersectionResult.hitT = hitT;                                       \
+    fake::intersectionResult.hitKind = hitKind;                                 \
+    fake::intersectionResult.a0 = a0;                                           \
+    fake::intersectionResult.a1 = a1;                                           \
+    fake::intersectionResult.a2 = a2;                                           \
+    fake::intersectionResult.a3 = a3;                                           \
+    fake::intersectionResult.a4 = a4;                                           \
+    fake::intersectionResult.a6 = a6;                                           \
+    fake::intersectionResult.a7 = a7;                                           \
+    return wasIntersection;                                                     \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_0()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a0;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_1()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a1;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_2()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a2;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_3()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a3;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_4()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a4;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_5()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a5;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_6()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a6;                                         \
+}                                                                               \
+                                                                                \
+unsigned optixGetAttribute_7()                                                  \
+{                                                                               \
+    return fake::intersectionResult.a7;                                         \
+}                                                                               \

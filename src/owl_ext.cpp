@@ -58,3 +58,9 @@ owlLaunch1DEXT(OWLRayGen rayGen, int dims,
     rg->launch(dims, (Params*)params);
 }
 
+OWL_API void
+owlContextSetNumAttributeValuesEXT(OWLContext context,
+                                   size_t numAttributeValues)
+{
+}
+
