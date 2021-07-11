@@ -1,13 +1,10 @@
 ## OWL commit to patch against
 
-commit 22f86012f2331e609ec426f88c4e92166deb5b06 (HEAD -> fakeOwl, master)
-Merge: eee679f d5407d1
+commit ccb6b36b8c01f7c8b75b7c026fb42e846ebcc92c (HEAD -> fakeOwl, origin/master, origin/HEAD, github/master)
 Author: Ingo Wald <ingowald@gmail.com>
-Date:   Tue Mar 16 10:59:01 2021 -0600
+Date:   Wed Jun 9 16:42:18 2021 -0600
 
-    Merge pull request #83 from dylanlacewell/dylan/vismasks
-    
-    Expose visibility masks on instance groups and rays
+    added missing dot(vec2)
 
 ## patch against owl.h
 
@@ -39,8 +36,7 @@ diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h
 ---
 > #define OWL_OFFSETOF(type,member)                       \
 >    (uint32_t)((char *)(&((struct type *)0)-> member )   \
->
--                                                    \
+>    -                                                    \
 
 ## patch against owl_device.h
 
@@ -67,13 +63,10 @@ diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h
 > #define OPTIX_BOUNDS_PROGRAM(programName) \
 >   extern "C" __global__ \
 >   void __boundsFunc__##programName
-> 
+>
 > #else
-261c269,270
-<   
----
+260a269
 >  #endif
-> 
 
 ## patch against vec.h
 

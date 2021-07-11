@@ -142,7 +142,7 @@ owlRayGenRelease(OWLRayGen rayGen)
 }
 
 OWL_API void
-owlBuildPrograms(OWLContext context)
+owlBuildPrograms(OWLContext context, bool debug)
 {
     Context* ctx = (Context*)context;
     ctx->buildPrograms();
