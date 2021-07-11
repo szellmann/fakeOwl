@@ -22,6 +22,42 @@ inline uint64_t clock64()
 }
 
 typedef struct {
+    char x;
+} char1;
+
+typedef struct {
+    char x, y;
+} char2;
+
+typedef struct {
+    char x, y, z;
+} char3;
+
+typedef struct {
+    char x, y, z, w;
+} char4;
+
+typedef struct {
+    short x;
+} short1;
+
+typedef struct {
+    short x, y;
+} short2;
+
+typedef struct {
+    short x, y, z;
+} short3;
+
+typedef struct {
+    short x, y, z, w;
+} short4;
+
+typedef struct {
+    int x;
+} int1;
+
+typedef struct {
     int x, y;
 } int2;
 
@@ -32,6 +68,74 @@ typedef struct {
 typedef struct {
     int x, y, z, w;
 } int4;
+
+typedef struct {
+    long x;
+} long1;
+
+typedef struct {
+    long x, y;
+} long2;
+
+typedef struct {
+    long x, y, z;
+} long3;
+
+typedef struct {
+    long x, y, z, w;
+} long4;
+
+typedef struct {
+    long long x;
+} longlong1;
+
+typedef struct {
+    long long x, y;
+} longlong2;
+
+typedef struct {
+    long long x, y, z;
+} longlong3;
+
+typedef struct {
+    long long x, y, z, w;
+} longlong4;
+
+typedef struct {
+    unsigned char x;
+} uchar1;
+
+typedef struct {
+    unsigned char x, y;
+} uchar2;
+
+typedef struct {
+    unsigned char x, y, z;
+} uchar3;
+
+typedef struct {
+    unsigned char x, y, z, w;
+} uchar4;
+
+typedef struct {
+    unsigned short x;
+} ushort1;
+
+typedef struct {
+    unsigned short x, y;
+} ushort2;
+
+typedef struct {
+    unsigned short x, y, z;
+} ushort3;
+
+typedef struct {
+    unsigned short x, y, z, w;
+} ushort4;
+
+typedef struct {
+    unsigned x;
+} uint1;
 
 typedef struct {
     unsigned x, y;
@@ -46,6 +150,42 @@ typedef struct {
 } uint4;
 
 typedef struct {
+    unsigned long x;
+} ulong1;
+
+typedef struct {
+    unsigned long x, y;
+} ulong2;
+
+typedef struct {
+    unsigned long x, y, z;
+} ulong3;
+
+typedef struct {
+    unsigned long x, y, z, w;
+} ulong4;
+
+typedef struct {
+    unsigned long long x;
+} ulonglong1;
+
+typedef struct {
+    unsigned long long x, y;
+} ulonglong2;
+
+typedef struct {
+    unsigned long long x, y, z;
+} ulonglong3;
+
+typedef struct {
+    unsigned long long x, y, z, w;
+} ulonglong4;
+
+typedef struct {
+    float x;
+} float1;
+
+typedef struct {
     float x, y;
 } float2;
 
@@ -56,6 +196,22 @@ typedef struct {
 typedef struct {
     float x, y, z, w;
 } float4;
+
+typedef struct {
+    double x;
+} double1;
+
+typedef struct {
+    double x, y;
+} double2;
+
+typedef struct {
+    double x, y, z;
+} double3;
+
+typedef struct {
+    double x, y, z, w;
+} double4;
 
 struct dim3 {
     dim3() = default;
@@ -83,6 +239,40 @@ namespace fake
 
 typedef fake::TextureHandle cudaTextureObject_t;
 typedef fake::TextureHandle CUtexObject;
+
+inline uchar1 make_uchar1(unsigned char x)
+{
+    uchar1 u1;
+    u1.x = x;
+    return u1;
+}
+
+inline uchar2 make_uchar2(unsigned char x, unsigned char y)
+{
+    uchar2 u2;
+    u2.x = x;
+    u2.y = y;
+    return u2;
+}
+
+inline uchar3 make_uchar3(unsigned char x, unsigned char y, unsigned char z)
+{
+    uchar3 u3;
+    u3.x = x;
+    u3.y = y;
+    u3.z = z;
+    return u3;
+}
+
+inline uchar4 make_uchar4(unsigned char x, unsigned char y, unsigned char z, unsigned char w)
+{
+    uchar4 u4;
+    u4.x = x;
+    u4.y = y;
+    u4.z = z;
+    u4.w = w;
+    return u4;
+}
 
 inline float3 make_float3(float x, float y, float z)
 {
