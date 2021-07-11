@@ -227,7 +227,7 @@ namespace owl {
   extern "C" __global__ \
   void __miss__##programName
 
-#if 1
+#ifdef FAKE_OWL_VERSION
 
 #define OPTIX_BOUNDS_PROGRAM(programName) \
   extern "C" __global__ \

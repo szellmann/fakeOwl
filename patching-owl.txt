@@ -62,7 +62,7 @@ diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h
 > // #  error "this file should only ever get included on the device side"
 > // #endif
 227a230
-> #if 1
+> #ifdef FAKE_OWL_VERSION
 228a232,236
 > #define OPTIX_BOUNDS_PROGRAM(programName) \
 >   extern "C" __global__ \
@@ -73,7 +73,7 @@ diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h
 <   
 ---
 >  #endif
->
+> 
 
 ## patch against vec.h
 
