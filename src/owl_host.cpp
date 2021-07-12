@@ -199,6 +199,14 @@ owlBufferGetPointer(OWLBuffer buffer, int deviceID)
     return buf->getPointer();
 }
 
+OWL_API OptixTraversableHandle
+owlGroupGetTraversable(OWLGroup group, int deviceID)
+{
+    (void)deviceID;
+    Group* grp = (Group*)group;
+    return grp->traversableHandle;
+}
+
 OWL_API OWLGeomType
 owlGeomTypeCreate(OWLContext context,
                   OWLGeomKind kind,
