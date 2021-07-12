@@ -49,16 +49,16 @@ diff owl/include/owl/common/math/vec.h fakeOwl/include/owl/common/math/vec.h
 103c103
 < #ifdef __CUDACC__
 ---
-> #if defined(__CUDACC__) || defined(FAKE_OWL_CUDA_TYPES)
+> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
 152c152
 < #ifdef __CUDACC__
 ---
-> #if defined(__CUDACC__) || defined(FAKE_OWL_CUDA_TYPES)
+> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
 210c210
 < #ifdef __CUDACC__
 ---
-> #if defined(__CUDACC__) || defined(FAKE_OWL_CUDA_TYPES)
+> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
 246c246
 < #ifdef __CUDACC__
 ---
-> #if defined(__CUDACC__) || defined(FAKE_OWL_CUDA_TYPES)
+> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
