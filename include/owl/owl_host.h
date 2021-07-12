@@ -16,9 +16,9 @@
 
 #pragma once
 
-#include <fake/cuda.h>
-#include <fake/optix.h>
-#include <fake/version.h>
+#include <cuda.h>
+#include <driver_types.h>
+#include <optix.h>
 
 #include <sys/types.h>
 #include <stdint.h>

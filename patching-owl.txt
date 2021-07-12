@@ -16,15 +16,7 @@ diff owl/include/owl/owl.h fakeOwl/include/owl/owl.h
 
 ## patch against owl_host.h
 
-diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h 
-19,21c19,21
-< #include <cuda.h>
-< #include <driver_types.h>
-< #include <optix.h>
----
-> #include <fake/cuda.h>
-> #include <fake/optix.h>
-> #include <fake/version.h>
+diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h
 70,72c70,72
 < #define OWL_OFFSETOF(type,member)               \
 <   ((char *)(&((struct type *)0)-> member )      \
@@ -36,28 +28,19 @@ diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h
 
 ## patch against owl_device.h
 
-diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h 
-22,23c22,25
-< #include <cuda.h>
-< #include <optix.h>
----
-> #include <fake/cuda.h>
-> #include <fake/optix.h>
-> #include <fake/module_decl.h>
-> #include <fake/version.h>
-29c31
+29c29
 < #ifndef __CUDACC__
 ---
 > #if !defined(__CUDACC__) && !defined(FAKE_OWL_VERSION)
-227a230
+227a228
 > #ifdef FAKE_OWL_VERSION
-228a232,236
+228a230,234
 > #define OPTIX_BOUNDS_PROGRAM(programName) \
 >   extern "C" __global__ \
 >   void __boundsFunc__##programName
 >
 > #else
-260a269
+260a267
 >  #endif
 
 ## patch against vec.h

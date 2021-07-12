@@ -19,10 +19,8 @@
 #include "owl/common/math/vec.h"
 #include "owl/common/math/box.h"
 // the 'actual' optix
-#include <fake/cuda.h>
-#include <fake/optix.h>
-#include <fake/module_decl.h>
-#include <fake/version.h>
+#include <cuda.h>
+#include <optix.h>
 
 // ==================================================================
 // actual device-side "API" built-ins.
