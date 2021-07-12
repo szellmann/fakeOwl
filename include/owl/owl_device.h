@@ -28,9 +28,9 @@
 // actual device-side "API" built-ins.
 // ==================================================================
 
-// #ifndef __CUDACC__
-// #  error "this file should only ever get included on the device side"
-// #endif
+#if !defined(__CUDACC__) && !defined(FAKE_OWL_VERSION)
+#  error "this file should only ever get included on the device side"
+#endif
 
 namespace owl {
 

@@ -12,11 +12,7 @@ diff owl/include/owl/owl.h fakeOwl/include/owl/owl.h
 27c27
 < #ifdef __CUDACC__
 ---
-> // #ifdef __CUDACC__
-29c29
-< #endif
----
-> // #endif
+> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
 
 ## patch against owl_host.h
 
@@ -49,14 +45,10 @@ diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h
 > #include <fake/optix.h>
 > #include <fake/module_decl.h>
 > #include <fake/version.h>
-29,31c31,33
+29c31
 < #ifndef __CUDACC__
-< #  error "this file should only ever get included on the device side"
-< #endif
 ---
-> // #ifndef __CUDACC__
-> // #  error "this file should only ever get included on the device side"
-> // #endif
+> #if !defined(__CUDACC__) && !defined(FAKE_OWL_VERSION)
 227a230
 > #ifdef FAKE_OWL_VERSION
 228a232,236
