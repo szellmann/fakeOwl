@@ -59,3 +59,8 @@ namespace fake
         uint64_t index;
     } TraversableHandle;
 } // fake
+
+#define OPTIX_BOUNDS_PROGRAM(programName) \
+  extern "C" __global__ \
+  void __boundsFunc__##programName
+

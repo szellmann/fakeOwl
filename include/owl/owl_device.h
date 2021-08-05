@@ -225,16 +225,9 @@ namespace owl {
   extern "C" __global__ \
   void __miss__##programName
 
-#ifdef FAKE_OWL_VERSION
-
-#define OPTIX_BOUNDS_PROGRAM(programName) \
-  extern "C" __global__ \
-  void __boundsFunc__##programName
-
-#else
-
 /* defines the wrapper stuff to actually launch all the bounds
    programs from the host - todo: move to deviceAPI.h once working */
+#ifndef OPTIX_BOUNDS_PROGRAM
 #define OPTIX_BOUNDS_PROGRAM(progName)                                  \
   /* fwd decl for the kernel func to call */                            \
   inline __device__                                                     \
@@ -263,6 +256,5 @@ namespace owl {
   /* now the actual device code that the user is writing: */            \
   inline __device__ void __boundsFunc__##progName                       \
   /* program args and body supplied by user ... */
-  
- #endif
+#endif
   

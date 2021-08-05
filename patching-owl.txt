@@ -28,20 +28,20 @@ diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h
 
 ## patch against owl_device.h
 
+diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h 
 29c29
 < #ifndef __CUDACC__
 ---
 > #if !defined(__CUDACC__) && !defined(FAKE_OWL_VERSION)
-227a228
-> #ifdef FAKE_OWL_VERSION
-228a230,234
-> #define OPTIX_BOUNDS_PROGRAM(programName) \
->   extern "C" __global__ \
->   void __boundsFunc__##programName
->
-> #else
-260a267
->  #endif
+228,229d227
+< 
+< 
+231a230
+> #ifndef OPTIX_BOUNDS_PROGRAM
+260c259
+<   
+---
+> #endif
 
 ## patch against vec.h
 
