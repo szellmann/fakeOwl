@@ -211,6 +211,8 @@ namespace visionaray
     class GroupBVH
     {
     public:
+        typedef std::shared_ptr<GroupBVH> SP;
+
         struct Reference : primitive<unsigned>
         {
             struct Instance
@@ -247,12 +249,12 @@ namespace visionaray
         GroupBVH();
         GroupBVH(fake::UserGeom** userGeoms, std::size_t numUserGeoms);
         GroupBVH(fake::TrianglesGeom** triGeoms, std::size_t numTrianglesGeoms);
-        GroupBVH(GroupBVH* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs);
+        GroupBVH(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs);
        ~GroupBVH();
 
         void reset(fake::UserGeom** userGeoms, std::size_t numUserGeoms);
         void reset(fake::TrianglesGeom** triGeoms, std::size_t numTrianglesGeoms);
-        void reset(GroupBVH* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs);
+        void reset(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs);
 
         // A handle to retrieve an accessor to this BVH
         fake::TraversableHandle traversableHandle;
@@ -322,7 +324,7 @@ namespace visionaray
             std::vector<unsigned> instIDs;
 
             // The blas's this BVH is created over
-            GroupBVH* bottomLevelBVHs = nullptr;
+            GroupBVH::SP* bottomLevelBVHs = nullptr;
 
             // The number of blas's
             std::size_t numBottomLevelBVHs = 0;

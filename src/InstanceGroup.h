@@ -8,7 +8,6 @@
 #include <owl/owl_host.h>
 
 #include "Group.h"
-#include "Visionaray.h"
 
 namespace fake
 {
@@ -31,7 +30,7 @@ namespace fake
         void buildAccel();
         void refitAccel();
 
-        const visionaray::GroupBVH& getAccel() const;
+        std::shared_ptr<visionaray::GroupBVH> getAccel();
 
         // Try to patch this group's BVH into parent(s)
         void optimizeBottomUp();
@@ -40,11 +39,11 @@ namespace fake
         void undoOptimization();
 
     private:
-        visionaray::GroupBVH bvh;
+        std::shared_ptr<visionaray::GroupBVH> bvh;
         std::vector<Group*> instances;
         std::vector<float> transforms;
         std::vector<uint32_t> instIDs;
-        std::vector<visionaray::GroupBVH> instanceBVHs;
+        std::vector<std::shared_ptr<visionaray::GroupBVH>> instanceBVHs;
 
         // Potentially store our own accessor here
         const void* ownAccessor = nullptr;

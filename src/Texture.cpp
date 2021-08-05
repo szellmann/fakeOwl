@@ -13,18 +13,19 @@ namespace fake
                      OWLTextureAddressMode  addressMode,
                      OWLTextureColorSpace   colorSpace,
                      uint32_t               linePitchInBytes)
+        : vtex(new visionaray::Texture)
     {
-        vtex.reset(texelFormat, size_x, size_y, texels,
-                   filterMode, addressMode, colorSpace,
-                   linePitchInBytes);
+        vtex->reset(texelFormat, size_x, size_y, texels,
+                    filterMode, addressMode, colorSpace,
+                    linePitchInBytes);
 
-        if (vtex.asRGBA8_2D.data != nullptr)
+        if (vtex->asRGBA8_2D.data != nullptr)
         {
-            accessor = &vtex.asRGBA8_2D.accessor;
+            accessor = &vtex->asRGBA8_2D.accessor;
         }
-        else if (vtex.asRGBA32F_2D.data != nullptr)
+        else if (vtex->asRGBA32F_2D.data != nullptr)
         {
-            accessor = &vtex.asRGBA32F_2D.accessor;
+            accessor = &vtex->asRGBA32F_2D.accessor;
         }
 
         textureHandle = registerTexture(ref(), texelFormat);
@@ -39,18 +40,19 @@ namespace fake
                      OWLTextureAddressMode  addressMode,
                      OWLTextureColorSpace   colorSpace,
                      uint32_t               linePitchInBytes)
+        : vtex(new visionaray::Texture)
     {
-        vtex.reset(texelFormat, size_x, size_y, size_z, texels,
-                   filterMode, addressMode, colorSpace,
-                   linePitchInBytes);
+        vtex->reset(texelFormat, size_x, size_y, size_z, texels,
+                    filterMode, addressMode, colorSpace,
+                    linePitchInBytes);
 
-        if (vtex.asR8_3D.data != nullptr)
+        if (vtex->asR8_3D.data != nullptr)
         {
-            accessor = &vtex.asR8_3D.accessor;
+            accessor = &vtex->asR8_3D.accessor;
         }
-        else if (vtex.asR32F_3D.data != nullptr)
+        else if (vtex->asR32F_3D.data != nullptr)
         {
-            accessor = &vtex.asR32F_3D.accessor;
+            accessor = &vtex->asR32F_3D.accessor;
         }
 
         textureHandle = registerTexture(ref(), texelFormat);

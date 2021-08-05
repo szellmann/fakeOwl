@@ -7,7 +7,6 @@
 
 #include "Geom.h"
 #include "Group.h"
-#include "Visionaray.h"
 
 namespace fake
 {
@@ -20,14 +19,14 @@ namespace fake
         void buildAccel();
         void refitAccel();
 
-        const visionaray::GroupBVH& getAccel() const;
+        std::shared_ptr<visionaray::GroupBVH> getAccel();
 
     private:
         OWLGeomKind kind;
 
         std::vector<Geom*> geoms;
 
-        visionaray::GroupBVH bvh;
+        std::shared_ptr<visionaray::GroupBVH> bvh;
     };
 
 } // fake

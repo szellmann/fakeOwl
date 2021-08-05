@@ -1,15 +1,17 @@
 
 #include "GeomGroup.h"
 #include "Logging.h"
+#include "Visionaray.h"
 
 namespace fake
 {
     GeomGroup::GeomGroup(OWLGeomKind kind, std::size_t numGeoms, OWLGeom* geoms)
         : kind(kind)
+        , bvh(new visionaray::GroupBVH)
     {
         this->geoms.resize(numGeoms);
 
-        traversableHandle = bvh.traversableHandle;
+        traversableHandle = bvh->traversableHandle;
 
         for (std::size_t i = 0; i < numGeoms; ++i)
         {
@@ -46,13 +48,13 @@ namespace fake
     {
         if (kind == OWL_GEOMETRY_USER || kind == OWL_GEOM_USER)
         {
-            bvh.reset((UserGeom**)geoms.data(), geoms.size());
-            bvh.build();
+            bvh->reset((UserGeom**)geoms.data(), geoms.size());
+            bvh->build();
         }
         else if (kind == OWL_GEOMETRY_TRIANGLES || kind == OWL_GEOM_TRIANGLES)
         {
-            bvh.reset((TrianglesGeom**)geoms.data(), geoms.size());
-            bvh.build();
+            bvh->reset((TrianglesGeom**)geoms.data(), geoms.size());
+            bvh->build();
         }
     }
 
@@ -65,7 +67,7 @@ namespace fake
         // }
     }
 
-    const visionaray::GroupBVH& GeomGroup::getAccel() const
+    visionaray::GroupBVH::SP GeomGroup::getAccel()
     {
         return bvh;
     }

@@ -3,12 +3,17 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 #include <owl/owl_host.h>
 #include <fake/cuda.h>
 
 #include "Resource.h"
-#include "VisionarayTexture.h"
+
+namespace visionaray
+{
+    class Texture;
+} // visionaray
 
 namespace fake
 {
@@ -49,7 +54,7 @@ namespace fake
         const void* accessor;
 
     private:
-        visionaray::Texture vtex;
+        std::shared_ptr<visionaray::Texture> vtex;
     };
 } // fake
 

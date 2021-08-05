@@ -47,7 +47,7 @@ namespace visionaray
         traversableHandle = registerTraversable(accessor);
     }
 
-    GroupBVH::GroupBVH(GroupBVH* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs)
+    GroupBVH::GroupBVH(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs)
     {
         reset(groupBVHs, instIDs, transforms, numGroupBVHs);
 
@@ -80,7 +80,7 @@ namespace visionaray
         asTrianglesGeomGroup.numTrianglesGeoms = numTrianglesGeoms;
     }
 
-    void GroupBVH::reset(GroupBVH* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs)
+    void GroupBVH::reset(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs)
     {
         asInstanceGroup.bottomLevelBVHs = groupBVHs;
         asInstanceGroup.numBottomLevelBVHs = numGroupBVHs;
@@ -204,7 +204,7 @@ namespace visionaray
             for (std::size_t i = 0; i < asInstanceGroup.numBottomLevelBVHs; ++i)
             {
                 // Set instance id
-                asInstanceGroup.bottomLevelBVHs[i].instID = asInstanceGroup.instIDs[i];
+                asInstanceGroup.bottomLevelBVHs[i]->instID = asInstanceGroup.instIDs[i];
 
                 // Compute absolute transforms
                 mat3 w2o3(worldToObjectTransform.col0,
@@ -215,11 +215,11 @@ namespace visionaray
                 w2o3 = w2o3 * m3;
                 mat4x3 w2o = { w2o3, worldToObjectTransform.col3 + m.col3 };
                 mat4x3 o2w = { inverse(w2o3), -w2o.col3 };
-                asInstanceGroup.bottomLevelBVHs[i].objectToWorldTransform = o2w;
-                asInstanceGroup.bottomLevelBVHs[i].worldToObjectTransform = w2o;
+                asInstanceGroup.bottomLevelBVHs[i]->objectToWorldTransform = o2w;
+                asInstanceGroup.bottomLevelBVHs[i]->worldToObjectTransform = w2o;
 
                 // Create visionaray instance
-                prims[i] = asInstanceGroup.bottomLevelBVHs[i].inst(asInstanceGroup.transforms[i]);
+                prims[i] = asInstanceGroup.bottomLevelBVHs[i]->inst(asInstanceGroup.transforms[i]);
             }
 
             binned_sah_builder builder;

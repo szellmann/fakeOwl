@@ -7,6 +7,7 @@
 #include "GeomGroup.h"
 #include "InstanceGroup.h"
 #include "Logging.h"
+#include "Visionaray.h"
 
 namespace fake
 {
@@ -15,11 +16,12 @@ namespace fake
                                  const uint32_t *initInstanceIDs,
                                  const float    *initTransforms,
                                  OWLMatrixFormat matrixFormat)
-        : instances(numInstances)
+        : bvh(new visionaray::GroupBVH)
+        , instances(numInstances)
         , instIDs(numInstances)
         , transforms(numInstances * 12)
     {
-        traversableHandle = bvh.traversableHandle;
+        traversableHandle = bvh->traversableHandle;
 
         if (initGroups)
         {
@@ -105,8 +107,8 @@ namespace fake
             instanceBVHs[i] = instances[i]->getAccel();
         }
 
-        bvh.reset(instanceBVHs.data(), instIDs.data(), (visionaray::mat4x3*)transforms.data(), instanceBVHs.size());
-        bvh.build();
+        bvh->reset(instanceBVHs.data(), instIDs.data(), (visionaray::mat4x3*)transforms.data(), instanceBVHs.size());
+        bvh->build();
     }
 
     void InstanceGroup::refitAccel()
@@ -115,7 +117,7 @@ namespace fake
         buildAccel();
     }
 
-    const visionaray::GroupBVH& InstanceGroup::getAccel() const
+    visionaray::GroupBVH::SP InstanceGroup::getAccel()
     {
         return bvh;
     }
@@ -131,7 +133,7 @@ namespace fake
             {
                 fake::Traversable& traversable = fake::getTraversable(traversableHandle);
                 fake::Traversable& childTraversable = fake::getTraversable(
-                            instances[0]->getAccel().traversableHandle);
+                            instances[0]->getAccel()->traversableHandle);
 
                 if (childTraversable.accessor != nullptr)
                 {
