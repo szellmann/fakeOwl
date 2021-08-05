@@ -26,7 +26,7 @@
 // actual device-side "API" built-ins.
 // ==================================================================
 
-#if !defined(__CUDACC__) && !defined(FAKE_OWL_VERSION)
+#ifndef __CUDACC__
 #  error "this file should only ever get included on the device side"
 #endif
 

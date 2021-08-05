@@ -6,14 +6,6 @@ Date:   Wed Jun 9 16:42:18 2021 -0600
 
     added missing dot(vec2)
 
-## patch against owl.h
-
-diff owl/include/owl/owl.h fakeOwl/include/owl/owl.h
-27c27
-< #ifdef __CUDACC__
----
-> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
-
 ## patch against owl_host.h
 
 diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h
@@ -28,37 +20,13 @@ diff owl/include/owl/owl_host.h fakeOwl/include/owl/owl_host.h
 
 ## patch against owl_device.h
 
-diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h 
-29c29
-< #ifndef __CUDACC__
----
-> #if !defined(__CUDACC__) && !defined(FAKE_OWL_VERSION)
+diff owl/include/owl/owl_device.h fakeOwl/include/owl/owl_device.h
 228,229d227
-< 
-< 
+<
+<
 231a230
 > #ifndef OPTIX_BOUNDS_PROGRAM
 260c259
-<   
+<
 ---
 > #endif
-
-## patch against vec.h
-
-diff owl/include/owl/common/math/vec.h fakeOwl/include/owl/common/math/vec.h
-103c103
-< #ifdef __CUDACC__
----
-> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
-152c152
-< #ifdef __CUDACC__
----
-> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
-210c210
-< #ifdef __CUDACC__
----
-> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
-246c246
-< #ifdef __CUDACC__
----
-> #if defined(__CUDACC__) || defined(FAKE_OWL_VERSION)
