@@ -4,10 +4,10 @@
 #include <visionaray/math/matrix.h>
 #include <visionaray/math/vector.h>
 
+#include "Visionaray.h" // keep on top!
 #include "GeomGroup.h"
 #include "InstanceGroup.h"
 #include "Logging.h"
-#include "Visionaray.h"
 
 namespace fake
 {

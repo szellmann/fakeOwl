@@ -1,8 +1,9 @@
 
+#include "VisionarayTexture.h" // keep on top!
+
 #include <owl/owl_host.h>
 
 #include "Texture.h"
-#include "VisionarayTexture.h"
 
 namespace visionaray
 {

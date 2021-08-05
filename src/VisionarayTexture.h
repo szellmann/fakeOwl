@@ -4,6 +4,8 @@
 #include <visionaray/texture/texture.h>
 #include <visionaray/math/unorm.h>
 
+#include <owl/owl_host.h>
+
 namespace visionaray
 {
     class Texture

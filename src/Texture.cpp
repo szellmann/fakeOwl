@@ -1,7 +1,7 @@
 #include <cstddef>
 
+#include "VisionarayTexture.h" // keep on top!
 #include "Texture.h"
-#include "VisionarayTexture.h"
 
 namespace fake
 {

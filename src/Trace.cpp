@@ -2,6 +2,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "Visionaray.h" // keep on top!
+
 #include <fake/optix.h>
 #include <fake/owl.h>
 
@@ -9,7 +11,6 @@
 #include "Miss.h"
 #include "Module.h"
 #include "Trace.h"
-#include "Visionaray.h"
 
 namespace fake
 {

@@ -1,7 +1,6 @@
-
+#include "Visionaray.h" // keep on top!
 #include "GeomGroup.h"
 #include "Logging.h"
-#include "Visionaray.h"
 
 namespace fake
 {

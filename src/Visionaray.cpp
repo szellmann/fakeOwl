@@ -5,9 +5,9 @@
 #include <visionaray/math/ray.h>
 #include <visionaray/aligned_vector.h>
 
+#include "Visionaray.h" // keep on top!
 #include "Context.h"
 #include "Trace.h"
-#include "Visionaray.h"
 
 namespace visionaray
 {

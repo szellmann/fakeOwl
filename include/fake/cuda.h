@@ -5,6 +5,8 @@
 
 #if !defined(__CUDACC__) && !defined(CUDARTAPI)
 
+#define __CUDACC__ 1
+
 #define __global__
 #define __constant__
 #define __host__

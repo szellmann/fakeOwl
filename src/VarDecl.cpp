@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <cstring>
 
+#include "Trace.h" // keep on top!
 #include "Buffer.h"
 #include "DataType.h"
 #include "Logging.h"
 #include "Texture.h"
-#include "Trace.h"
 #include "VarDecl.h"
 
 namespace fake
