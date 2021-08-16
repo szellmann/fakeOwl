@@ -14,10 +14,8 @@ namespace fake                                                                  
     static thread_local int launchIndex[3];                                     \
     static thread_local int launchDims[3];                                      \
                                                                                 \
-    static thread_local ProgramType previousProgram = PtRayGen;                 \
-    static thread_local ProgramType currentProgram = PtRayGen;                  \
-                                                                                \
-    static thread_local ProgramState programStates[PtCount];                    \
+    static thread_local ProgramState programStates[128];                        \
+    static thread_local unsigned stackPtr = 0;                                  \
     static thread_local IntersectionResult intersectionResult = {};             \
 }                                                                               \
                                                                                 \
@@ -37,49 +35,46 @@ extern "C" void fakeSetLaunchDims(int x, int y, int z)                          
                                                                                 \
 extern "C" fake::ProgramState* fakePrepareRayGen()                              \
 {                                                                               \
-    fake::previousProgram = fake::currentProgram;                               \
-    fake::currentProgram = fake::PtRayGen;                                      \
-                                                                                \
-    return &fake::programStates[fake::PtRayGen];                                \
+    fake::stackPtr++;                                                           \
+    fake::programStates[fake::stackPtr].type = fake::PtRayGen;                  \
+    return &fake::programStates[fake::stackPtr];                                \
 }                                                                               \
                                                                                 \
 extern "C" fake::ProgramState* fakePrepareIntersection()                        \
 {                                                                               \
-    fake::previousProgram = fake::currentProgram;                               \
-    fake::currentProgram = fake::PtIntersect;                                   \
-                                                                                \
     /* reset intersection */                                                    \
     fake::intersectionResult = {};                                              \
                                                                                 \
-    return &fake::programStates[fake::PtIntersect];                             \
+    fake::stackPtr++;                                                           \
+    fake::programStates[fake::stackPtr].type = fake::PtIntersect;               \
+    return &fake::programStates[fake::stackPtr];                                \
 }                                                                               \
                                                                                 \
 extern "C" fake::ProgramState* fakePrepareClosestHit()                          \
 {                                                                               \
-    fake::previousProgram = fake::currentProgram;                               \
-    fake::currentProgram = fake::PtClosestHit;                                  \
-                                                                                \
-    return &fake::programStates[fake::PtClosestHit];                            \
+    fake::stackPtr++;                                                           \
+    fake::programStates[fake::stackPtr].type = fake::PtClosestHit;              \
+    return &fake::programStates[fake::stackPtr];                                \
 }                                                                               \
                                                                                 \
 extern "C" fake::ProgramState* fakePrepareMiss()                                \
 {                                                                               \
-    fake::previousProgram = fake::currentProgram;                               \
-    fake::currentProgram = fake::PtMiss;                                        \
-                                                                                \
-    return &fake::programStates[fake::PtMiss];                                  \
+    fake::stackPtr++;                                                           \
+    fake::programStates[fake::stackPtr].type = fake::PtMiss;                    \
+    return &fake::programStates[fake::stackPtr];                                \
 }                                                                               \
                                                                                 \
 extern "C" fake::IntersectionResult* fakeGetIntersectionResult()                \
 {                                                                               \
-    fake::currentProgram = fake::previousProgram;                               \
+    /* side effect: pop program stack */                                        \
+    fake::stackPtr--;                                                           \
                                                                                 \
     return &fake::intersectionResult;                                           \
 }                                                                               \
                                                                                 \
 extern "C" void fakeResetPreviousProgramState()                                 \
 {                                                                               \
-    fake::currentProgram = fake::previousProgram;                               \
+    fake::stackPtr--;                                                           \
 }                                                                               \
                                                                                 \
 owl::vec2i optixGetLaunchIndex()                                                \
@@ -94,18 +89,18 @@ owl::vec2i optixGetLaunchDimensions()                                           
                                                                                 \
 unsigned optixGetPrimitiveIndex()                                               \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].primID;                    \
+    return fake::programStates[fake::stackPtr].primID;                          \
 }                                                                               \
                                                                                 \
 /* Returns the user-supplied instID */                                          \
 unsigned optixGetInstanceId()                                                   \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].instID;                    \
+    return fake::programStates[fake::stackPtr].instID;                          \
 }                                                                               \
                                                                                 \
 unsigned optixGetHitKind()                                                      \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].hitKind;                   \
+    return fake::programStates[fake::stackPtr].hitKind;                         \
 }                                                                               \
                                                                                 \
 OptixPrimitiveType optixGetPrimitiveType()                                      \
@@ -126,27 +121,27 @@ bool optixIsBackFaceHit(unsigned hitKind)                                       
 owl::vec2f optixGetTriangleBarycentrics()                                       \
 {                                                                               \
     return {                                                                    \
-        fake::programStates[fake::currentProgram].triangleBarycentricU,         \
-        fake::programStates[fake::currentProgram].triangleBarycentricV          \
+        fake::programStates[fake::stackPtr].triangleBarycentricU,               \
+        fake::programStates[fake::stackPtr].triangleBarycentricV                \
     };                                                                          \
 }                                                                               \
                                                                                 \
 void optixGetWorldToObjectTransformMatrix(float m[12])                          \
 {                                                                               \
-    memcpy(m, fake::programStates[fake::currentProgram].worldToObjectTransform, \
+    memcpy(m, fake::programStates[fake::stackPtr].worldToObjectTransform,       \
            sizeof(float) * 12);                                                 \
 }                                                                               \
                                                                                 \
 void optixGetObjectToWorldTransformMatrix(float m[12])                          \
 {                                                                               \
-    memcpy(m, fake::programStates[fake::currentProgram].objectToWorldTransform, \
+    memcpy(m, fake::programStates[fake::stackPtr].objectToWorldTransform,       \
            sizeof(float) * 12);                                                 \
 }                                                                               \
                                                                                 \
 owl::vec3f optixTransformNormalFromObjectToWorldSpace(owl::vec3f normal)        \
 {                                                                               \
     float* o2w                                                                  \
-      = fake::programStates[fake::currentProgram].objectToWorldTransform;       \
+      = fake::programStates[fake::stackPtr].objectToWorldTransform;             \
         owl::vec3f col1(o2w[0], o2w[1], o2w[2]);                                \
         owl::vec3f col2(o2w[3], o2w[4], o2w[5]);                                \
         owl::vec3f col3(o2w[6], o2w[7], o2w[8]);                                \
@@ -157,62 +152,62 @@ owl::vec3f optixTransformNormalFromObjectToWorldSpace(owl::vec3f normal)        
 owl::vec3f optixGetWorldRayOrigin()                                             \
 {                                                                               \
     return {                                                                    \
-        fake::programStates[fake::currentProgram].worldRayOrigin[0],            \
-        fake::programStates[fake::currentProgram].worldRayOrigin[1],            \
-        fake::programStates[fake::currentProgram].worldRayOrigin[2]             \
+        fake::programStates[fake::stackPtr].worldRayOrigin[0],                  \
+        fake::programStates[fake::stackPtr].worldRayOrigin[1],                  \
+        fake::programStates[fake::stackPtr].worldRayOrigin[2]                   \
     };                                                                          \
 }                                                                               \
                                                                                 \
 owl::vec3f optixGetWorldRayDirection()                                          \
 {                                                                               \
     return {                                                                    \
-        fake::programStates[fake::currentProgram].worldRayDirection[0],         \
-        fake::programStates[fake::currentProgram].worldRayDirection[1],         \
-        fake::programStates[fake::currentProgram].worldRayDirection[2]          \
+        fake::programStates[fake::stackPtr].worldRayDirection[0],               \
+        fake::programStates[fake::stackPtr].worldRayDirection[1],               \
+        fake::programStates[fake::stackPtr].worldRayDirection[2]                \
     };                                                                          \
 }                                                                               \
                                                                                 \
 owl::vec3f optixGetObjectRayOrigin()                                            \
 {                                                                               \
     return {                                                                    \
-        fake::programStates[fake::currentProgram].objectRayOrigin[0],           \
-        fake::programStates[fake::currentProgram].objectRayOrigin[1],           \
-        fake::programStates[fake::currentProgram].objectRayOrigin[2]            \
+        fake::programStates[fake::stackPtr].objectRayOrigin[0],                 \
+        fake::programStates[fake::stackPtr].objectRayOrigin[1],                 \
+        fake::programStates[fake::stackPtr].objectRayOrigin[2]                  \
     };                                                                          \
 }                                                                               \
                                                                                 \
 owl::vec3f optixGetObjectRayDirection()                                         \
 {                                                                               \
     return {                                                                    \
-        fake::programStates[fake::currentProgram].objectRayDirection[0],        \
-        fake::programStates[fake::currentProgram].objectRayDirection[1],        \
-        fake::programStates[fake::currentProgram].objectRayDirection[2]         \
+        fake::programStates[fake::stackPtr].objectRayDirection[0],              \
+        fake::programStates[fake::stackPtr].objectRayDirection[1],              \
+        fake::programStates[fake::stackPtr].objectRayDirection[2]               \
     };                                                                          \
 }                                                                               \
                                                                                 \
 float optixGetRayTmin()                                                         \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].rayTmin;                   \
+    return fake::programStates[fake::stackPtr].rayTmin;                         \
 }                                                                               \
                                                                                 \
 float optixGetRayTmax()                                                         \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].rayTmax;                   \
+    return fake::programStates[fake::stackPtr].rayTmax;                         \
 }                                                                               \
                                                                                 \
 unsigned optixGetPayload_0()                                                    \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].p0;                        \
+    return fake::programStates[fake::stackPtr].p0;                              \
 }                                                                               \
                                                                                 \
 unsigned optixGetPayload_1()                                                    \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].p1;                        \
+    return fake::programStates[fake::stackPtr].p1;                              \
 }                                                                               \
                                                                                 \
 const void* optixGetSbtDataPointer()                                            \
 {                                                                               \
-    return fake::programStates[fake::currentProgram].sbtPointer;                \
+    return fake::programStates[fake::stackPtr].sbtPointer;                      \
 }                                                                               \
                                                                                 \
 const bool optixReportIntersection(float    hitT,                               \

@@ -49,6 +49,10 @@ namespace fake
                 fake::ProgramState* (*fakePrepareRayGen)();
                 fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
 
+                void (*fakeResetPreviousProgramState)();
+                fakeResetPreviousProgramState
+                        = (void (*)())fakeResetPreviousProgramStateSym;
+
                 void (*fakeSetLaunchIndex)(int, int, int);
                 fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
 
@@ -66,6 +70,8 @@ namespace fake
                     fakeSetLaunchIndex(i, 0, 0);
                     entryPoint();
                 }
+
+                fakeResetPreviousProgramState();
             }
             );
 
@@ -105,6 +111,10 @@ namespace fake
                 fake::ProgramState* (*fakePrepareRayGen)();
                 fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
 
+                void (*fakeResetPreviousProgramState)();
+                fakeResetPreviousProgramState
+                        = (void (*)())fakeResetPreviousProgramStateSym;
+
                 void (*fakeSetLaunchIndex)(int, int, int);
                 fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
 
@@ -125,6 +135,8 @@ namespace fake
                         entryPoint();
                     }
                 }
+
+                fakeResetPreviousProgramState();
             }
             );
 

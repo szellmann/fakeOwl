@@ -19,6 +19,7 @@ namespace fake
     /* state variables for intersection programs */
     typedef struct
     {
+        ProgramType type;
         unsigned primID;
         unsigned instID;
         float triangleBarycentricU;
