@@ -21,6 +21,16 @@ inline uint64_t clock64()
     return ((uint64_t)hi << 32) | lo;
 }
 
+#if 0
+// TODO: need to define CUDA_ARCH in fake_owl_compile_and_embed
+template <typename T> inline T min(const T& x, const T& y) { return x < y ? x : y; }
+template <typename T> inline T max(const T& x, const T& y) { return x < y ? y : x; }
+inline float __saturatef(const float &f) { return min(1.f,max(0.f,f)); }
+#else
+#include <algorithm>
+inline float __saturatef(const float &f) { return std::min(1.f,std::max(0.f,f)); }
+#endif
+
 typedef struct {
     char x;
 } char1;
@@ -327,6 +337,12 @@ inline T tex2D(cudaTextureObject_t obj, float tcx, float tcy)
     T res;
     fake::sampleTexture2D(res, obj, tcx, tcy);
     return res;
+}
+
+template <typename T>
+inline void tex2D(T* res, cudaTextureObject_t obj, float tcx, float tcy)
+{
+    fake::sampleTexture2D(*res, obj, tcx, tcy);
 }
 
 template <typename T>
