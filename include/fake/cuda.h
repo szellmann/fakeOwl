@@ -274,6 +274,21 @@ inline uchar4 make_uchar4(unsigned char x, unsigned char y, unsigned char z, uns
     return u4;
 }
 
+inline float1 make_float1(float x)
+{
+    float1 f1;
+    f1.x = x;
+    return f1;
+}
+
+inline float2 make_float2(float x, float y)
+{
+    float2 f2;
+    f2.x = x;
+    f2.y = y;
+    return f2;
+}
+
 inline float3 make_float3(float x, float y, float z)
 {
     float3 f3;
