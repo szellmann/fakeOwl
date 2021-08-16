@@ -31,6 +31,13 @@ owlContextCreate(int32_t *requestedDeviceIDs,
 }
 
 OWL_API void
+owlEnableMotionBlur(OWLContext _context)
+{
+    // Not implemented yet!
+    (void)_context;
+}
+
+OWL_API void
 owlContextDestroy(OWLContext context)
 {
     FAKE_LOG_DBG << "Destroying context";
@@ -458,14 +465,45 @@ owlRayGenSet1ul(OWLRayGen   obj,
 }
 
 OWL_API void
-owlRayGenSet3f(OWLRayGen obj,
-             const char *name,
-             float       x,
-             float       y,
-             float       z)
+owlRayGenSet1f(OWLRayGen   obj,
+               const char* name,
+               float       val)
+{
+    RayGen* rayGen = (RayGen*)obj;
+    rayGen->set(name, val);
+}
+
+OWL_API void
+owlRayGenSet2f(OWLRayGen   obj,
+               const char *name,
+               float       x,
+               float       y)
+{
+    RayGen* rayGen = (RayGen*)obj;
+    rayGen->set(name, x, y);
+}
+
+OWL_API void
+owlRayGenSet3f(OWLRayGen   obj,
+               const char *name,
+               float       x,
+               float       y,
+               float       z)
 {
     RayGen* rayGen = (RayGen*)obj;
     rayGen->set(name, x, y, z);
+}
+
+OWL_API void
+owlRayGenSet4f(OWLRayGen   obj,
+               const char *name,
+               float       x,
+               float       y,
+               float       z,
+               float       w)
+{
+    RayGen* rayGen = (RayGen*)obj;
+    rayGen->set(name, x, y, z, w);
 }
 
 OWL_API void owlRayGenSetGroup(OWLRayGen   obj,
@@ -542,6 +580,18 @@ owlGeomSet3f(OWLGeom     obj,
 {
     Geom* geom = (Geom*)obj;
     geom->set(name, x, y, z);
+}
+
+OWL_API void
+owlGeomSet4f(OWLGeom     obj,
+             const char *name,
+             float       x,
+             float       y,
+             float       z,
+             float       w)
+{
+    Geom* geom = (Geom*)obj;
+    geom->set(name, x, y, z, w);
 }
 
 OWL_API void owlGeomSetTexture(OWLGeom     obj,
