@@ -22,6 +22,7 @@ namespace fake
         struct Reference
         {
             TextureHandle handle;
+            OWLTexelFormat texelFormat;
             const void* accessor;
         };
 
@@ -55,13 +56,14 @@ namespace fake
 
     private:
         std::shared_ptr<visionaray::Texture> vtex;
+        OWLTexelFormat texelFormat;
     };
 } // fake
 
 
 namespace fake
 {
-    TextureHandle registerTexture(Texture::Reference tex, OWLTexelFormat texelFormat);
+    TextureHandle registerTexture(Texture::Reference tex);
 
     Texture::Reference& getTexture(TextureHandle handle);
 

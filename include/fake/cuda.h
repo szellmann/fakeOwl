@@ -240,11 +240,7 @@ typedef cudaGraphicsResource* cudaGraphicsResource_t;
 
 namespace fake
 {
-    typedef struct {
-        void* textures;
-        uint64_t index;
-        uint32_t texelFormat;
-    } TextureHandle;
+    typedef unsigned long long TextureHandle;
 }
 
 typedef fake::TextureHandle cudaTextureObject_t;

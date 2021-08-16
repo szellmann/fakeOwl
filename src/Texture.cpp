@@ -14,6 +14,7 @@ namespace fake
                      OWLTextureColorSpace   colorSpace,
                      uint32_t               linePitchInBytes)
         : vtex(new visionaray::Texture)
+        , texelFormat(texelFormat)
     {
         vtex->reset(texelFormat, size_x, size_y, texels,
                     filterMode, addressMode, colorSpace,
@@ -28,7 +29,7 @@ namespace fake
             accessor = &vtex->asRGBA32F_2D.accessor;
         }
 
-        textureHandle = registerTexture(ref(), texelFormat);
+        textureHandle = registerTexture(ref());
     }
 
     Texture::Texture(OWLTexelFormat         texelFormat,
@@ -41,6 +42,7 @@ namespace fake
                      OWLTextureColorSpace   colorSpace,
                      uint32_t               linePitchInBytes)
         : vtex(new visionaray::Texture)
+        , texelFormat(texelFormat)
     {
         vtex->reset(texelFormat, size_x, size_y, size_z, texels,
                     filterMode, addressMode, colorSpace,
@@ -55,7 +57,7 @@ namespace fake
             accessor = &vtex->asR32F_3D.accessor;
         }
 
-        textureHandle = registerTexture(ref(), texelFormat);
+        textureHandle = registerTexture(ref());
     }
 
     Texture::~Texture()
@@ -64,7 +66,7 @@ namespace fake
 
     Texture::Reference Texture::ref()
     {
-        return { textureHandle, accessor };
+        return { textureHandle, texelFormat, accessor };
     }
 } // fake
 
@@ -74,42 +76,35 @@ namespace fake
     static Texture::Reference textures[1<<16];
     static std::size_t numTextures = 0;
 
-    TextureHandle registerTexture(Texture::Reference tex, OWLTexelFormat texelFormat)
+    TextureHandle registerTexture(Texture::Reference tex)
     {
-        tex.handle = { &textures[0], (uint64_t)numTextures, (uint32_t)texelFormat };
-        textures[numTextures++] = tex;
+        std::size_t i = numTextures++;
+        textures[i] = tex;
+        tex.handle = (TextureHandle)&textures[i];
         return tex.handle;
-    }
-
-    Texture::Reference& getTexture(TextureHandle handle)
-    {
-        return textures[handle.index];
     }
 
     //--- CUDA texture interface --------------------------
 
     void sampleTexture2D(float4& result, cudaTextureObject_t obj, float tcx, float tcy)
     {
-        OWLTexelFormat texelFormat = (OWLTexelFormat)obj.texelFormat;
-        if (texelFormat == OWL_TEXEL_FORMAT_RGBA8)
-        {
-            Texture::Reference* textures = (Texture::Reference*)obj.textures;
+        Texture::Reference* texture = (Texture::Reference*)obj;
 
+        if (texture->texelFormat == OWL_TEXEL_FORMAT_RGBA8)
+        {
             using Reference = visionaray::texture_ref<visionaray::vector<4, visionaray::unorm<8>>, 2>;
 
-            Reference ref = *(Reference*)textures[obj.index].accessor;
+            Reference ref = *(Reference*)texture->accessor;
 
             visionaray::vec4 tx = visionaray::tex2D(ref, visionaray::vec2(tcx, tcy));
 
             result = { tx.x, tx.y, tx.z, tx.w };
         }
-        else if (texelFormat == OWL_TEXEL_FORMAT_RGBA32F)
+        else if (texture->texelFormat == OWL_TEXEL_FORMAT_RGBA32F)
         {
-            Texture::Reference* textures = (Texture::Reference*)obj.textures;
-
             using Reference = visionaray::texture_ref<visionaray::vector<4, float>, 2>;
 
-            Reference ref = *(Reference*)textures[obj.index].accessor;
+            Reference ref = *(Reference*)texture->accessor;
 
             visionaray::vec4 tx = visionaray::tex2D(ref, visionaray::vec2(tcx, tcy));
 
@@ -119,24 +114,21 @@ namespace fake
 
     void sampleTexture3D(float& result, cudaTextureObject_t obj, float tcx, float tcy, float tcz)
     {
-        OWLTexelFormat texelFormat = (OWLTexelFormat)obj.texelFormat;
-        if (texelFormat == OWL_TEXEL_FORMAT_R8)
-        {
-            Texture::Reference* textures = (Texture::Reference*)obj.textures;
+        Texture::Reference* texture = (Texture::Reference*)obj;
 
+        if (texture->texelFormat == OWL_TEXEL_FORMAT_R8)
+        {
             using Reference = visionaray::texture_ref<visionaray::unorm<8>, 3>;
 
-            Reference ref = *(Reference*)textures[obj.index].accessor;
+            Reference ref = *(Reference*)texture->accessor;
 
             result = visionaray::tex3D(ref, visionaray::vec3(tcx, tcy, tcz));
         }
-        else if (texelFormat == OWL_TEXEL_FORMAT_R32F)
+        else if (texture->texelFormat == OWL_TEXEL_FORMAT_R32F)
         {
-            Texture::Reference* textures = (Texture::Reference*)obj.textures;
-
             using Reference = visionaray::texture_ref<float, 3>;
 
-            Reference ref = *(Reference*)textures[obj.index].accessor;
+            Reference ref = *(Reference*)texture->accessor;
 
             result = visionaray::tex3D(ref, visionaray::vec3(tcx, tcy, tcz));
         }
