@@ -28,6 +28,7 @@ float optixGetRayTmax();
 const void* optixGetSbtDataPointer();
 unsigned optixGetPayload_0();
 unsigned optixGetPayload_1();
+void optixTerminateRay();
 
 typedef enum {
     OPTIX_PRIMITIVE_TYPE_CUSTOM,

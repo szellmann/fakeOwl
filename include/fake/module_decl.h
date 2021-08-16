@@ -414,3 +414,8 @@ unsigned optixGetAttribute_7()                                                  
 {                                                                               \
     return fake::intersectionResult.a7;                                         \
 }                                                                               \
+                                                                                \
+void optixTerminateRay()                                                        \
+{                                                                               \
+    /* TODO */                                                                  \
+}                                                                               \
