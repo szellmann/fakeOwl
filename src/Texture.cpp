@@ -90,6 +90,12 @@ namespace fake
     {
         Texture::Reference* texture = (Texture::Reference*)obj;
 
+        if (texture == nullptr)
+        {
+            result = { 0.f, 0.f, 0.f, 0.f };
+            return;
+        }
+
         if (texture->texelFormat == OWL_TEXEL_FORMAT_RGBA8)
         {
             using Reference = visionaray::texture_ref<visionaray::vector<4, visionaray::unorm<8>>, 2>;
@@ -115,6 +121,12 @@ namespace fake
     void sampleTexture3D(float& result, cudaTextureObject_t obj, float tcx, float tcy, float tcz)
     {
         Texture::Reference* texture = (Texture::Reference*)obj;
+
+        if (texture == nullptr)
+        {
+            result = 0.f;
+            return;
+        }
 
         if (texture->texelFormat == OWL_TEXEL_FORMAT_R8)
         {
