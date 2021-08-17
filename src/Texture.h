@@ -21,7 +21,6 @@ namespace fake
     {
         struct Reference
         {
-            TextureHandle handle;
             OWLTexelFormat texelFormat;
             const void* accessor;
         };

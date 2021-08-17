@@ -66,7 +66,7 @@ namespace fake
 
     Texture::Reference Texture::ref()
     {
-        return { textureHandle, texelFormat, accessor };
+        return { texelFormat, accessor };
     }
 } // fake
 
@@ -80,8 +80,8 @@ namespace fake
     {
         std::size_t i = numTextures++;
         textures[i] = tex;
-        tex.handle = (TextureHandle)&textures[i];
-        return tex.handle;
+        // Reinterpret pointer as handle
+        return (TextureHandle)&textures[i];
     }
 
     //--- CUDA texture interface --------------------------
