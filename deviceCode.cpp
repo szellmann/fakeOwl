@@ -6,11 +6,7 @@
 
 namespace dvr
 {
-#ifdef FAKE_OWL_VERSION
-    extern "C" __constant__ LaunchParams optixLaunchParams {}; // diff-1 (initialization)
-#else
     extern "C" __constant__ LaunchParams optixLaunchParams;
-#endif
 
 
     typedef owl::common::LCG<4> Random;

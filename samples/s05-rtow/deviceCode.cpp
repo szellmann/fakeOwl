@@ -17,10 +17,6 @@
 #include "GeomTypes.h"
 #include <optix_device.h>
 
-#if 1 // if fakeOwl!
-FAKE_OWL_MODULE_DECL // diff-1
-#endif
-
 using namespace owl;
 
 #define NUM_SAMPLES_PER_PIXEL 16

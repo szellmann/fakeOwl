@@ -9,6 +9,8 @@
 #include "RayGen.h"
 #include "Trace.h"
 
+void* optixLaunchParams;
+
 namespace fake
 {
     RayGen::RayGen(std::size_t sizeOfVarStruct, OWLVarDecl* vars, int numVars)
@@ -92,7 +94,7 @@ namespace fake
 
         if (params != nullptr)
         {
-            void* optixLaunchParams;
+            //void* optixLaunchParams;
             optixLaunchParams = (void*)module->optixLaunchParamsSym;
             std::memcpy(optixLaunchParams, params->dataPtr, params->sizeOfVarStruct);
         }

@@ -18,12 +18,8 @@ The following changes are necessary to an existing code base at the very least:
 
 Replace `owlXXXBufferCreate()` with `owlBufferCreateEXT()` from [owl_ext.h](/include/owl/owl_ext.h) (uses malloc/free instead of cudaMalloc et al.).
 
+The device code _should_ mostly just work. See the comments on CUDA below, and it _might_ be necessary to shuffle some headers around in case that declarations are slightly different than in _real_ OptiX.
 In your "device code":
-
-For launch params declarations, add init parentheses:
-```
-extern "C" __constant__ LaunchParams optixLaunchParams {}; // diff-1 (initialization)
-```
 
 CMake is a bit different of course. You have to link with libfakeOwl.{a|dylib} and you want to check out the macro `fake_owl_compile_and_embed` in [cmake/configure_fake_owl.cmake](/cmake/configure_fake_owl.cmake). With my cmake version (3.19.1) that macro would fail if being passed `.cu` files, therefore I'm renaming the files where the optix device programs would usually go to `.cpp` (another option would be to use symlinks).
 

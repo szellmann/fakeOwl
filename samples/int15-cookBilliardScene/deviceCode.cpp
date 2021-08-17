@@ -19,11 +19,7 @@
 #include <optix_device.h>
 #include <owl/common/math/random.h>
 
-#ifdef FAKE_OWL_VERSION
-extern "C" __constant__ LaunchParams optixLaunchParams {};
-#else
 extern "C" __constant__ LaunchParams optixLaunchParams;
-#endif
 
 typedef owl::common::LCG<4> Random;
 
