@@ -17,10 +17,6 @@
 #include "deviceCode.h"
 #include <owl/owl_device.h>
 
-#ifdef FAKE_OWL_VERSION
-FAKE_OWL_MODULE_DECL // diff-1
-#endif
-
 OPTIX_RAYGEN_PROGRAM(simpleRayGen)()
 {
   const RayGenData &self = owl::getProgramData<RayGenData>();

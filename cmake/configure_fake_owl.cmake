@@ -11,6 +11,7 @@ macro(fake_owl_compile_and_embed output_var file)
     add_library(${targetName} SHARED ${file})
     # TODO: make this work:
     #target_compile_definitions(${targetName} PUBLIC __CUDA_ARCH__)
+    target_compile_definitions(${targetName} PUBLIC FAKE_OWL_DEFINE_ENTRY_POINTS)
     set_target_properties(${targetName} PROPERTIES LINKER_LANGUAGE "CXX")
     set_source_files_properties(${targetName} PROPERTIES LANGUAGE "CXX")
     target_link_libraries(${targetName} ${fakeOwl_LIBRARY})

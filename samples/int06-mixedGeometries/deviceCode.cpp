@@ -17,10 +17,6 @@
 #include "GeomTypes.h"
 #include <owl/owl_device.h>
 
-#ifdef FAKE_OWL_VERSION
-FAKE_OWL_MODULE_DECL // diff-1
-#endif
-
 using namespace owl;
 
 #define NUM_SAMPLES_PER_PIXEL 1

@@ -17,10 +17,6 @@
 #include "deviceCode.h"
 #include <owl/owl_device.h>
 
-#ifdef FAKE_OWL_VERSION
-FAKE_OWL_MODULE_DECL // diff-1
-#endif
-
 struct Hit {
   bool  hadHit = false;
   vec3f pos, nor, col;
