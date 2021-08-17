@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <vector>
 
 #include "Buffer.h"
 #include "DataType.h"
+#include "Texture.h"
 
 namespace fake
 {
@@ -25,7 +27,7 @@ namespace fake
     {
         if (init != nullptr)
         {
-            std::memcpy(dataPtr, init, numElems * GetDataTypeInfo(dataType).sizeInBytes);
+            upload(init, 0, numElems * GetDataTypeInfo(dataType).sizeInBytes);
         }
     }
 
@@ -53,9 +55,32 @@ namespace fake
 
     void HostBuffer::upload(const void* hostPtr, std::size_t offset, std::size_t numBytes)
     {
-        std::size_t sizeInBytes = numBytes == size_t(-1)
-                ? numElems * GetDataTypeInfo(dataType).sizeInBytes : numBytes;
-        std::memcpy(dataPtr, (uint8_t*)hostPtr + offset, sizeInBytes);
+        if (dataType == OWL_TEXTURE)
+        {
+            // First convert to handles
+            std::vector<TextureHandle> handles(numElems);
+
+            const Texture** textures = (const Texture**)((const uint8_t*)hostPtr + offset);
+
+            for (std::size_t i = 0; i < numElems; ++i)
+            {
+                if (textures[i] != nullptr)
+                    handles[i] = textures[i]->textureHandle;
+                else
+                    handles[i] = 0;
+            }
+
+            std::size_t sizeInBytes = numBytes == size_t(-1)
+                    ? numElems * GetDataTypeInfo(dataType).sizeInBytes : numBytes;
+
+            std::memcpy(dataPtr, handles.data(), sizeInBytes);
+        }
+        else
+        {
+            std::size_t sizeInBytes = numBytes == size_t(-1)
+                    ? numElems * GetDataTypeInfo(dataType).sizeInBytes : numBytes;
+            std::memcpy(dataPtr, (const uint8_t*)hostPtr + offset, sizeInBytes);
+        }
     }
 
     size_t HostBuffer::getSizeInBytes()
