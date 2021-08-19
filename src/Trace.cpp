@@ -79,6 +79,7 @@ void optixTrace(OptixTraversableHandle handle,
     pl.rayType = SBToffset;
     pl.visibilityMask = visibilityMask;
     pl.rayFlags = rayFlags;
+    pl.tmax = tmax; // that's the tmax that's always updated as in OptiX
     pl.worldToObjectTransform = { mat3::identity(), vec3(0.f) };
     pl.objectToWorldTransform = { mat3::identity(), vec3(0.f) };
     pl.worldRayOrigin = vec3(rayOrigin.x, rayOrigin.y, rayOrigin.z);

@@ -31,6 +31,8 @@ namespace fake
         OptixVisibilityMask visibilityMask;
         unsigned rayFlags;
 
+        float tmax;
+
         visionaray::mat4x3 objectToWorldTransform;
         visionaray::mat4x3 worldToObjectTransform;
 

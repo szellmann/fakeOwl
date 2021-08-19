@@ -132,7 +132,7 @@ namespace visionaray
         state->objectRayDirection[1] = r.dir.y;
         state->objectRayDirection[2] = r.dir.z;
         state->rayTmin = r.tmin;
-        state->rayTmax = r.tmax;
+        state->rayTmax = r.payload->tmax;
         state->p0 = *r.payload->p0;
         state->p1 = *r.payload->p1;
         state->sbtPointer = prim.userGeom->dataPtr;
@@ -153,6 +153,9 @@ namespace visionaray
             hr.objectRayDirection = r.dir;
             hr.objectToWorldTransform = r.payload->objectToWorldTransform;
             hr.worldToObjectTransform = r.payload->worldToObjectTransform;
+
+            // Update, like OptiX does
+            r.payload->tmax = res->hitT;
         }
         return hr;
     }

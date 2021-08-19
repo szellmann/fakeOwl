@@ -215,10 +215,13 @@ inline const void* optixGetSbtDataPointer()
 inline const bool optixReportIntersection(float    hitT,
                                           unsigned hitKind)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+    }
     return wasIntersection;
 }
 
@@ -226,11 +229,14 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned hitKind,
                                           unsigned a0)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+    }
     return wasIntersection;
 }
 
@@ -239,12 +245,15 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a0,
                                           unsigned a1)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+    }
     return wasIntersection;
 }
 
@@ -254,13 +263,16 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a1,
                                           unsigned a2)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
-    fake::intersectionResult.a2 = a2;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+        fake::intersectionResult.a2 = a2;
+    }
     return wasIntersection;
 }
 
@@ -271,14 +283,17 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a2,
                                           unsigned a3)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
-    fake::intersectionResult.a2 = a2;
-    fake::intersectionResult.a3 = a3;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+        fake::intersectionResult.a2 = a2;
+        fake::intersectionResult.a3 = a3;
+    }
     return wasIntersection;
 }
 
@@ -290,15 +305,18 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a3,
                                           unsigned a4)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
-    fake::intersectionResult.a2 = a2;
-    fake::intersectionResult.a3 = a3;
-    fake::intersectionResult.a4 = a4;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+        fake::intersectionResult.a2 = a2;
+        fake::intersectionResult.a3 = a3;
+        fake::intersectionResult.a4 = a4;
+    }
     return wasIntersection;
 }
 
@@ -311,16 +329,19 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a4,
                                           unsigned a5)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
-    fake::intersectionResult.a2 = a2;
-    fake::intersectionResult.a3 = a3;
-    fake::intersectionResult.a4 = a4;
-    fake::intersectionResult.a5 = a5;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+        fake::intersectionResult.a2 = a2;
+        fake::intersectionResult.a3 = a3;
+        fake::intersectionResult.a4 = a4;
+        fake::intersectionResult.a5 = a5;
+    }
     return wasIntersection;
 }
 
@@ -334,16 +355,19 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a5,
                                           unsigned a6)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
-    fake::intersectionResult.a2 = a2;
-    fake::intersectionResult.a3 = a3;
-    fake::intersectionResult.a4 = a4;
-    fake::intersectionResult.a6 = a6;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+        fake::intersectionResult.a2 = a2;
+        fake::intersectionResult.a3 = a3;
+        fake::intersectionResult.a4 = a4;
+        fake::intersectionResult.a6 = a6;
+    }
     return wasIntersection;
 }
 
@@ -358,17 +382,20 @@ inline const bool optixReportIntersection(float    hitT,
                                           unsigned a6,
                                           unsigned a7)
 {
-    bool wasIntersection = true; /* TODO */
-    fake::intersectionResult.wasHit = 1;
-    fake::intersectionResult.hitT = hitT;
-    fake::intersectionResult.hitKind = hitKind;
-    fake::intersectionResult.a0 = a0;
-    fake::intersectionResult.a1 = a1;
-    fake::intersectionResult.a2 = a2;
-    fake::intersectionResult.a3 = a3;
-    fake::intersectionResult.a4 = a4;
-    fake::intersectionResult.a6 = a6;
-    fake::intersectionResult.a7 = a7;
+    bool wasIntersection = optixGetRayTmin() <= hitT && hitT <= optixGetRayTmax();
+    if (wasIntersection)
+    {
+        fake::intersectionResult.wasHit = 1;
+        fake::intersectionResult.hitT = hitT;
+        fake::intersectionResult.hitKind = hitKind;
+        fake::intersectionResult.a0 = a0;
+        fake::intersectionResult.a1 = a1;
+        fake::intersectionResult.a2 = a2;
+        fake::intersectionResult.a3 = a3;
+        fake::intersectionResult.a4 = a4;
+        fake::intersectionResult.a6 = a6;
+        fake::intersectionResult.a7 = a7;
+    }
     return wasIntersection;
 }
 
