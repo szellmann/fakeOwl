@@ -25,6 +25,11 @@ CMake is a bit different of course. You have to link with libfakeOwl.{a|dylib} a
 
 That's mostly it. _Some_ platform-specific CUDA stuff works, but most (obviously) doesn't. Have a look in the [fake/cuda.h](/include/fake/cuda.h) and [fake/optix.h](/include/fake/optix.h) files. The OptiX functions should _eventually_ be ported in their entirety but the CUDA stuff is only there for convenience. BTW, there is a `clock64()` implementation in `fake/cuda.h` that you should use instead of `clock()` on x86, as the latter will perform syscalls and is awfully slow (some of the owl samples use `clock()`).
 
+OWL compatibility
+-----------------
+
+fakeOwl is based off of stable OWL releases; the basis for new fakeOwl versions form the public header files under [include/owl/](https://github.com/owl-project/owl/tree/master/owl/include/owl). The current fakeOwl version is based on the commit `ca8f7b7e72db600fa7f993cf6e4f471e5895983e` (OWL master as of Sat Aug 21 13:56:13 2021 -0600).
+
 License
 -------
 

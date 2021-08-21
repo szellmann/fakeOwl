@@ -338,7 +338,7 @@ typedef struct _OWLMissProg      *OWLMissProg;
   all programs within a given launch */
 typedef struct _OWLLaunchParams  *OWLLaunchParams, *OWLParams, *OWLGlobals;
 
-OWL_API void owlBuildPrograms(OWLContext context, bool debug = false);
+OWL_API void owlBuildPrograms(OWLContext context);
 OWL_API void owlBuildPipeline(OWLContext context);
 OWL_API void owlBuildSBT(OWLContext context,
                          OWLBuildSBTFlags flags OWL_IF_CPP(=OWL_SBT_ALL));
@@ -380,6 +380,12 @@ OWL_API void
 owlContextSetRayTypeCount(OWLContext context,
                           size_t numRayTypes);
 
+/* Set number of attributes for passing data from custom Intersection programs
+   to ClosestHit programs.  Default 2.  Has no effect once programs are built.*/
+OWL_API void
+owlContextSetNumAttributeValues(OWLContext context,
+                                size_t numAttributeValues);
+
 /*! tells OptiX to specialize the values of certain launch parameters
   when compiling modules, and ignore their values at launch.
   See section 6.3.1 of the OptiX 7.2 programming guide.
@@ -416,7 +422,7 @@ owlContextSetBoundLaunchParamValues(OWLContext context,
 OWL_API void
 owlSetMaxInstancingDepth(OWLContext context,
                          int32_t maxInstanceDepth);
-  
+
 
 OWL_API void
 owlContextDestroy(OWLContext context);
@@ -689,14 +695,17 @@ OWL_API void
 owlRayGenLaunch2D(OWLRayGen rayGen, int dims_x, int dims_y);
 
 /*! perform a raygen launch with launch parameters, in a *synchronous*
-    way; it, by the time this function returns the launch is completed */
+    way; it, by the time this function returns the launch is
+    completed. Both rayGen and params must be valid handles; it is
+    valid to have a empty params, but it may not be null */
 OWL_API void
 owlLaunch2D(OWLRayGen rayGen, int dims_x, int dims_y,
             OWLParams params);
 
 /*! perform a raygen launch with launch parameters, in a *A*synchronous
     way; it, this will only launch, but *NOT* wait for completion (see
-    owlLaunchSync) */
+    owlLaunchSync). Both rayGen and params must be valid handles; it is
+    valid to have a empty params, but it may not be null */
 OWL_API void
 owlAsyncLaunch2D(OWLRayGen rayGen, int dims_x, int dims_y,
                  OWLParams params);
