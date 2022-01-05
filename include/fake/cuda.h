@@ -1,7 +1,10 @@
 
 #pragma once
 
+#if !defined(__aarch64__)
 #include <x86intrin.h>
+#endif
+#include <stdint.h>
 
 #if !defined(__CUDACC__) && !defined(CUDARTAPI)
 
@@ -16,9 +19,15 @@
 
 inline uint64_t clock64()
 {
+#if defined(__aarch64__)
+    uint64_t cnt;
+    asm volatile("mrs %0, cntvct_el0" : "=r" (cnt));
+    return cnt;
+#else
     unsigned int lo,hi;
     __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
     return ((uint64_t)hi << 32) | lo;
+#endif
 }
 
 #if 0
