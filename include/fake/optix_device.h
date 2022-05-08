@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string.h>
 #include <stdexcept>
 
 #include <owl/common/math/LinearSpace.h>
