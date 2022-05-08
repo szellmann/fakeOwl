@@ -59,4 +59,5 @@ set(SOURCES
 
 set(fakeOwl_LIBRARY fakeOwl PARENT_SCOPE)
 add_library(fakeOwl ${HEADERS} ${SOURCES})
+target_link_libraries(fakeOwl PUBLIC ${CMAKE_DL_LIBS})
 add_library(owl::owl ALIAS fakeOwl)
