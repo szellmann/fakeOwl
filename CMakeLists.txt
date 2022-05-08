@@ -22,7 +22,7 @@ set(fakeOwl_LIBRARY ${fakeOwl_LIBRARY} PARENT_SCOPE)
 #--- samples ----------------------------------------------
 if (FAKE_OWL_BUILD_SAMPLES)
   include(cmake/configure_fake_owl.cmake)
-  add_subdirectory(cuteeOwl)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/submodules/cuteeOwl)
   include_directories(${QT_OWL_INCLUDES})
   include_directories(samples/common/3rdParty)
   add_subdirectory(samples/fake01-rayCasting)

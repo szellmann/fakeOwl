@@ -1,3 +1,6 @@
 [submodule "submodules/visionaray"]
 	path = submodules/visionaray
 	url = https://github.com/szellmann/visionaray
+[submodule "submodules/cuteeOwl"]
+	path = submodules/cuteeOwl
+	url = https://github.com/owl-project/cuteeOwl
