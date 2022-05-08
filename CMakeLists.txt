@@ -17,22 +17,15 @@ set(fakeOwl_LIBRARY ${fakeOwl_LIBRARY} PARENT_SCOPE)
 
 #--- test application -------------------------------------
 
-include(cmake/configure_fake_owl.cmake)
-set(owl_dir ${PROJECT_SOURCE_DIR})
-add_subdirectory(cuteeOwl)
-include_directories(${QT_OWL_INCLUDES})
-# find_package(CUDA)
-include_directories(${CUDA_INCLUDE_DIRS})
-fake_owl_compile_and_embed(
-  embedded_deviceCode deviceCode.cpp
-  )
-add_executable(test Renderer.cpp viewer.cpp mesh.cpp ${embedded_deviceCode})
-target_link_libraries(test ${fakeOwl_LIBRARY} qtOWL)
 
 
 #--- samples ----------------------------------------------
 if (FAKE_OWL_BUILD_SAMPLES)
+  include(cmake/configure_fake_owl.cmake)
+  add_subdirectory(cuteeOwl)
+  include_directories(${QT_OWL_INCLUDES})
   include_directories(samples/common/3rdParty)
+  add_subdirectory(samples/fake01-rayCasting)
   add_subdirectory(samples/int01-simpleTriangles)
   add_subdirectory(samples/int06-mixedGeometries)
   add_subdirectory(samples/int10-texturedTriangles)

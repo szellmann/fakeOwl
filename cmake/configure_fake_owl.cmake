@@ -16,7 +16,7 @@ macro(fake_owl_compile_and_embed output_var file)
     set_source_files_properties(${targetName} PROPERTIES LANGUAGE "CXX")
     target_link_libraries(${targetName} ${fakeOwl_LIBRARY})
     #set_property(TARGET ${targetName} PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
-    set_property(TARGET ${targetName} PROPERTY COMPILE_FLAGS "-lto")
+    #set_property(TARGET ${targetName} PROPERTY COMPILE_FLAGS "-lto")
 
     set(embedded_file ${CMAKE_CURRENT_BINARY_DIR}/fakeOwl_${targetName}_embedded.c)
 
