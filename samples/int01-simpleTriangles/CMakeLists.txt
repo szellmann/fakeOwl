@@ -23,6 +23,6 @@ add_executable(int01-simpleTriangles
   )
 target_link_libraries(int01-simpleTriangles
   ${fakeOwl_LIBRARY}
+  qtOWL
   )
-QT_OWL_LINK(int01-simpleTriangles)
 

@@ -27,8 +27,7 @@ fake_owl_compile_and_embed(
   embedded_deviceCode deviceCode.cpp
   )
 add_executable(test Renderer.cpp viewer.cpp mesh.cpp ${embedded_deviceCode})
-target_link_libraries(test ${fakeOwl_LIBRARY})
-QT_OWL_LINK(test)
+target_link_libraries(test ${fakeOwl_LIBRARY} qtOWL)
 
 
 #--- samples ----------------------------------------------

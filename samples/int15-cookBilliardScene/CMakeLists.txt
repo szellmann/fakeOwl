@@ -24,7 +24,7 @@ add_executable(int15-cookBilliardScene
   )
 target_link_libraries(int15-cookBilliardScene
   ${fakeOwl_LIBRARY}
+  qtOWL
   )
-QT_OWL_LINK(int15-cookBilliardScene)
 
 

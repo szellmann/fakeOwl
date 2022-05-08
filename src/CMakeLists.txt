@@ -59,3 +59,4 @@ set(SOURCES
 
 set(fakeOwl_LIBRARY fakeOwl PARENT_SCOPE)
 add_library(fakeOwl ${HEADERS} ${SOURCES})
+add_library(owl::owl ALIAS fakeOwl)

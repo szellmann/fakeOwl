@@ -27,8 +27,8 @@ add_executable(int06-rtow-mixedGeometries
 
 target_link_libraries(int06-rtow-mixedGeometries
   ${fakeOwl_LIBRARY}
+  qtOWL
   )
-QT_OWL_LINK(int06-rtow-mixedGeometries)
 
 
 
