@@ -34,11 +34,7 @@ namespace fake
         {
             void* optixLaunchParams;
             optixLaunchParams = (void*)module->optixLaunchParamsSym;
-#ifdef __APPLE__ // ... crashes on either one or the other; but why ?!
             std::memcpy(optixLaunchParams, params->dataPtr, params->sizeOfVarStruct);
-#else
-            std::memcpy(&optixLaunchParams, params->dataPtr, params->sizeOfVarStruct);
-#endif
         }
 
         // Update all traversables to have a pointer to the current module!
@@ -100,11 +96,7 @@ namespace fake
         {
             //void* optixLaunchParams;
             optixLaunchParams = (void*)module->optixLaunchParamsSym;
-#ifdef __APPLE__ // ... crashes on either one or the other; but why ?!
             std::memcpy(optixLaunchParams, params->dataPtr, params->sizeOfVarStruct);
-#else
-            std::memcpy(&optixLaunchParams, params->dataPtr, params->sizeOfVarStruct);
-#endif
         }
 
         // Update all traversables to have a pointer to the current module!

@@ -21,7 +21,6 @@ add_executable(int01-simpleTriangles
   hostCode.cpp
   ${ptxCode}
   )
-set_target_properties(int01-simpleTriangles PROPERTIES MACOSX_BUNDLE YES)
 target_link_libraries(int01-simpleTriangles
   ${fakeOwl_LIBRARY}
   qtOWL

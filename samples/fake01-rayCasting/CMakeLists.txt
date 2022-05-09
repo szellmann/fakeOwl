@@ -23,7 +23,6 @@ add_executable(fake01-rayCasting
   mesh.cpp
   ${embedded_deviceCode}
   )
-set_target_properties(fake01-rayCasting PROPERTIES MACOSX_BUNDLE YES)
 target_link_libraries(fake01-rayCasting
   ${fakeOwl_LIBRARY}
   qtOWL

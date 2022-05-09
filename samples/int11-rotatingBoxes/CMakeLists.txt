@@ -21,7 +21,6 @@ add_executable(int11-rotatingBoxes
   hostCode.cpp
   ${ptxCode}
   )
-set_target_properties(int11-rotatingBoxes PROPERTIES MACOSX_BUNDLE YES)
 target_link_libraries(int11-rotatingBoxes
   ${fakeOwl_LIBRARY}
   qtOWL

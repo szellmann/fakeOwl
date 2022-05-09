@@ -25,7 +25,6 @@ add_executable(int06-rtow-mixedGeometries
   ${ptxCode}
   )
 
-set_target_properties(int06-rtow-mixedGeometries PROPERTIES MACOSX_BUNDLE YES)
 target_link_libraries(int06-rtow-mixedGeometries
   ${fakeOwl_LIBRARY}
   qtOWL

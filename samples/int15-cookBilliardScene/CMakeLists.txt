@@ -22,7 +22,6 @@ add_executable(int15-cookBilliardScene
   hostCode.cpp
   ${ptxCode}
   )
-set_target_properties(int15-cookBilliardScene PROPERTIES MACOSX_BUNDLE YES)
 target_link_libraries(int15-cookBilliardScene
   ${fakeOwl_LIBRARY}
   qtOWL
