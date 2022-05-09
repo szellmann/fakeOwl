@@ -21,6 +21,7 @@ add_executable(int10-texturedTriangles
   hostCode.cpp
   ${ptxCode}
   )
+set_target_properties(int10-texturedTriangles PROPERTIES MACOSX_BUNDLE YES)
 target_link_libraries(int10-texturedTriangles
   ${fakeOwl_LIBRARY}
   ${OWL_VIEWER_LIBRARIES}
