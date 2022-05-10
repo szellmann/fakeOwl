@@ -1,3 +1,4 @@
+find_package(Threads)
 
 set(HEADERS
     Bounds.h
@@ -59,5 +60,5 @@ set(SOURCES
 
 set(fakeOwl_LIBRARY fakeOwl PARENT_SCOPE)
 add_library(fakeOwl ${HEADERS} ${SOURCES})
-target_link_libraries(fakeOwl PUBLIC ${CMAKE_DL_LIBS})
+target_link_libraries(fakeOwl PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 add_library(owl::owl ALIAS fakeOwl)
