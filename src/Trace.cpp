@@ -67,6 +67,9 @@ void optixTrace(OptixTraversableHandle handle,
 {
     using namespace visionaray;
 
+    if (handle.traversables == nullptr)
+        return;
+
     fake::Ray r;
     r.ori = vec3(rayOrigin.x, rayOrigin.y, rayOrigin.z);
     r.dir = vec3(rayDirection.x, rayDirection.y, rayDirection.z);
