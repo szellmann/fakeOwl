@@ -86,6 +86,38 @@ namespace fake
 
     //--- CUDA texture interface --------------------------
 
+    void sampleTexture1D(float4& result, cudaTextureObject_t obj, float tcx)
+    {
+        Texture::Reference* texture = (Texture::Reference*)obj;
+
+        if (texture == nullptr)
+        {
+            result = { 0.f, 0.f, 0.f, 0.f };
+            return;
+        }
+
+        if (texture->texelFormat == OWL_TEXEL_FORMAT_RGBA8)
+        {
+            using Reference = visionaray::texture_ref<visionaray::vector<4, visionaray::unorm<8>>, 1>;
+
+            Reference ref = *(Reference*)texture->accessor;
+
+            visionaray::vec4 tx = visionaray::tex1D(ref, tcx);
+
+            result = { tx.x, tx.y, tx.z, tx.w };
+        }
+        else if (texture->texelFormat == OWL_TEXEL_FORMAT_RGBA32F)
+        {
+            using Reference = visionaray::texture_ref<visionaray::vector<4, float>, 1>;
+
+            Reference ref = *(Reference*)texture->accessor;
+
+            visionaray::vec4 tx = visionaray::tex1D(ref, tcx);
+
+            result = { tx.x, tx.y, tx.z, tx.w };
+        }
+    }
+
     void sampleTexture2D(float4& result, cudaTextureObject_t obj, float tcx, float tcy)
     {
         Texture::Reference* texture = (Texture::Reference*)obj;

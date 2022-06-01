@@ -17,6 +17,69 @@
 
 #define __forceinline__ __attribute__((always_inline))
 
+// enums
+typedef enum cudaError {
+  cudaSuccess                =  0,
+  cudaErrorInvalidValue      =  1,
+  cudaErrorMemoryAllocation  =  2,
+  cudaErrorInvalidPitchValue = 12,
+} cudaError_t;
+
+enum cudaChannelFormatKind
+{
+    cudaChannelFormatKindSigned   = 0,
+    cudaChannelFormatKindUnsigned = 1,
+    cudaChannelFormatKindFloat    = 2,
+    cudaChannelFormatKindNone     = 3,
+    // The rest is not supported, so for the moment
+    // let's just catch that at compile time..
+};
+
+enum cudaMemcpyKind
+{
+    cudaMemcpyHostToHost     = 0,
+    cudaMemcpyHostToDevice   = 1,
+    cudaMemcpyDeviceToHost   = 2,
+    cudaMemcpyDeviceToDevice = 3,
+    cudaMemcpyDefault        = 4,
+};
+
+enum cudaResourceType {
+    cudaResourceTypeArray          = 0x00,
+    cudaResourceTypeMipmappedArray = 0x01,
+    cudaResourceTypeLinear         = 0x02,
+    cudaResourceTypePitch2D        = 0x03,
+};
+
+enum cudaResourceViewFormat {
+    cudaResViewFormatNone          = 0x00,
+    cudaResViewFormatUnsignedChar1 = 0x01,
+    cudaResViewFormatUnsignedChar2 = 0x02,
+    cudaResViewFormatUnsignedChar4 = 0x03,
+    //...
+    cudaResViewFormatFloat1        = 0x16,
+    cudaResViewFormatFloat2        = 0x17,
+    cudaResViewFormatFloat4        = 0x18,
+    //...
+};
+
+enum cudaTextureAddressMode {
+    cudaAddressModeWrap   = 0,
+    cudaAddressModeClamp  = 1,
+    cudaAddressModeMirror = 2,
+    cudaAddressModeBorder = 3,
+};
+
+enum cudaTextureFilterMode {
+    cudaFilterModePoint  = 0,
+    cudaFilterModeLinear = 1,
+};
+
+enum cudaTextureReadMode {
+    cudaReadModeElementType    = 0,
+    cudaReadModeNormaizedFloat = 1,
+};
+
 inline uint64_t clock64()
 {
 #if defined(__aarch64__)
@@ -255,6 +318,66 @@ namespace fake
 typedef fake::TextureHandle cudaTextureObject_t;
 typedef fake::TextureHandle CUtexObject;
 
+typedef struct cudaArray *cudaArray_t;
+typedef const struct cudaArray *cudaArray_const_t;
+
+typedef struct {
+} cudaMipmappedArray_t;
+
+struct cudaChannelFormatDesc {
+    int x, y, z, w;
+    enum cudaChannelFormatKind f;
+};
+
+struct cudaResourceDesc {
+    enum cudaResourceType resType;
+    union {
+        struct {
+            cudaArray_t array;
+        } array;
+        struct {
+            cudaMipmappedArray_t mipmap;
+        } mipmap;
+        struct {
+            void *devPtr;
+            struct cudaChannelFormatDesc desc;
+            size_t sizeInBytes;
+        } linear;
+        struct {
+            void *devPtr;
+            struct cudaChannelFormatDesc desc;
+            size_t width;
+            size_t height;
+            size_t pitchInBytes;
+        } pitch2D;
+    } res;
+};
+
+struct cudaResourceViewDesc {
+    enum cudaResourceViewFormat format;
+    size_t                      width;
+    size_t                      height;
+    size_t                      depth;
+    unsigned int                firstMipmapLevel;
+    unsigned int                lastMipmapLevel;
+    unsigned int                firstLayer;
+    unsigned int                lastLayer;
+};
+
+struct cudaTextureDesc {
+    enum cudaTextureAddressMode addressMode[3];
+    enum cudaTextureFilterMode  filterMode;
+    enum cudaTextureReadMode    readMode;
+    int                         sRGB;
+    float                       borderColor[4];
+    int                         normalizedCoords;
+    unsigned                    maxAnisotropy;
+    enum cudaTextureFilterMode  mipmapFilterMode;
+    float                       mipmapLevelBias;
+    float                       minMipmapLevelClamp;
+    float                       maxMipmapLevelClamp;
+};
+
 inline uchar1 make_uchar1(unsigned char x)
 {
     uchar1 u1;
@@ -328,13 +451,212 @@ inline int atomicAdd(int* addr, int val)
     return __atomic_fetch_add(addr, val, __ATOMIC_RELAXED);
 }
 
+// ------------------------------------------------------------------
+// CUDA texture functions
+// ------------------------------------------------------------------
+
 namespace fake
 {
+    template <typename T>
+    struct ChannelFormatDesc {};
+
+    template <> struct ChannelFormatDesc<char1> { 
+        static cudaChannelFormatDesc get() { return {8,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<char2> { 
+        static cudaChannelFormatDesc get() { return {8,8,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<char3> { 
+        static cudaChannelFormatDesc get() { return {8,8,8,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<char4> { 
+        static cudaChannelFormatDesc get() { return {8,8,8,8,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uchar1> { 
+        static cudaChannelFormatDesc get() { return {8,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uchar2> { 
+        static cudaChannelFormatDesc get() { return {8,8,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uchar3> { 
+        static cudaChannelFormatDesc get() { return {8,8,8,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uchar4> { 
+        static cudaChannelFormatDesc get() { return {8,8,8,8,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<short1> { 
+        static cudaChannelFormatDesc get() { return {16,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<short2> { 
+        static cudaChannelFormatDesc get() { return {16,16,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<short3> { 
+        static cudaChannelFormatDesc get() { return {16,16,16,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<short4> { 
+        static cudaChannelFormatDesc get() { return {16,16,16,16,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ushort1> { 
+        static cudaChannelFormatDesc get() { return {16,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ushort2> { 
+        static cudaChannelFormatDesc get() { return {16,16,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ushort3> { 
+        static cudaChannelFormatDesc get() { return {16,16,16,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ushort4> { 
+        static cudaChannelFormatDesc get() { return {16,16,16,16,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<int1> { 
+        static cudaChannelFormatDesc get() { return {32,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<int2> { 
+        static cudaChannelFormatDesc get() { return {32,32,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<int3> { 
+        static cudaChannelFormatDesc get() { return {32,32,32,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<int4> { 
+        static cudaChannelFormatDesc get() { return {32,32,32,32,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uint1> { 
+        static cudaChannelFormatDesc get() { return {32,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uint2> { 
+        static cudaChannelFormatDesc get() { return {32,32,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uint3> { 
+        static cudaChannelFormatDesc get() { return {32,32,32,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<uint4> { 
+        static cudaChannelFormatDesc get() { return {32,32,32,32,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<long> { 
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<long1> { 
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<long2> { 
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<long3> { 
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<long4> { 
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindSigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ulong1> {
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ulong2> {
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ulong3> {
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<ulong4> {
+        static cudaChannelFormatDesc get() { return {0,0,0,0,cudaChannelFormatKindUnsigned}; }
+    };
+
+    template <> struct ChannelFormatDesc<float1> { 
+        static cudaChannelFormatDesc get() { return {32,0,0,0,cudaChannelFormatKindFloat}; }
+    };
+
+    template <> struct ChannelFormatDesc<float2> { 
+        static cudaChannelFormatDesc get() { return {32,32,0,0,cudaChannelFormatKindFloat}; }
+    };
+
+    template <> struct ChannelFormatDesc<float3> { 
+        static cudaChannelFormatDesc get() { return {32,32,32,0,cudaChannelFormatKindFloat}; }
+    };
+
+    template <> struct ChannelFormatDesc<float4> { 
+        static cudaChannelFormatDesc get() { return {32,32,32,32,cudaChannelFormatKindFloat}; }
+    };
+
+    void sampleTexture1D(float4& result, TextureHandle obj, float tcx);
+
     void sampleTexture2D(float4& result, TextureHandle obj, float tcx, float tcy);
 
     void sampleTexture3D(float& result, TextureHandle obj, float tcx, float tcy, float tcz);
     void sampleTexture3D(float4& result, TextureHandle obj, float tcx, float tcy, float tcz);
 } // fake
+
+template <typename T>
+cudaChannelFormatDesc cudaCreateChannelDesc()
+{
+    return fake::ChannelFormatDesc<T>::get();
+}
+
+cudaError_t cudaDestroyTextureObject(cudaTextureObject_t texObject);
+
+cudaError_t cudaMallocArray(cudaArray_t* array,
+                            const cudaChannelFormatDesc* desc,
+                            size_t width,
+                            size_t height = 0,
+                            unsigned flags = 0);
+
+cudaError_t cudaMemcpy2DToArray(cudaArray_t dst,
+                                size_t wOffset,
+                                size_t hOffset,
+                                const void* src,
+                                size_t spitch,
+                                size_t width,
+                                size_t height,
+                                cudaMemcpyKind kind);
+
+cudaError_t cudaCreateTextureObject(cudaTextureObject_t* pTexObject,
+                                    const cudaResourceDesc* pResDesc,
+                                    const cudaTextureDesc* pTexDesc,
+                                    const cudaResourceViewDesc* pResViewDesc);
+
+template <typename T>
+inline T tex1D(cudaTextureObject_t obj, float tcx)
+{
+    T res;
+    fake::sampleTexture1D(res, obj, tcx);
+    return res;
+}
+
+template <typename T>
+inline void tex1D(T* res, cudaTextureObject_t obj, float tcx)
+{
+    fake::sampleTexture1D(*res, obj, tcx);
+}
 
 template <typename T>
 inline T tex2D(cudaTextureObject_t obj, float tcx, float tcy)
