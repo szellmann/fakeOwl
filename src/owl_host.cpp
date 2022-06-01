@@ -948,6 +948,14 @@ owlParamsSetPointer(OWLParams    obj,
     params->set(name, val);
 }
 
+OWL_API void
+owlParamsSetRaw(OWLParams  obj,
+              const char  *name,
+              const void *val)
+{
+    Params* params = (Params*)obj;
+    params->set(name, val);
+}
 
 
 
