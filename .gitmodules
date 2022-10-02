@@ -4,3 +4,6 @@
 [submodule "submodules/cuteeOwl"]
 	path = submodules/cuteeOwl
 	url = https://github.com/owl-project/cuteeOwl
+[submodule "submodules/glfw"]
+	path = submodules/glfw
+	url = https://github.com/glfw/glfw
