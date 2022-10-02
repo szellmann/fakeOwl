@@ -25,7 +25,7 @@
 // our device-side data structures
 #include "GeomTypes.h"
 // viewer base class, for window and user interaction
-#include "qtOWL/OWLViewer.h"
+#include "owlViewer/OWLViewer.h"
 
 #include <random>
 
@@ -180,7 +180,7 @@ void createScene()
 
 
 
-struct Viewer : public qtOWL::OWLViewer
+struct Viewer : public owl::viewer::OWLViewer
 {
   Viewer();
   
@@ -211,7 +211,7 @@ void Viewer::cameraChanged()
   const vec3f lookAt = camera.getAt();
   const vec3f lookUp = camera.getUp();
   const float cosFovy = camera.getCosFovy();
-  const float vfov = qtOWL::toDegrees(acosf(cosFovy));
+  const float vfov = owl::viewer::toDegrees(acosf(cosFovy));
   // ........... compute variable values  ..................
   const vec3f vup = lookUp;
   const float aspect = fbSize.x / float(fbSize.y);
@@ -618,8 +618,6 @@ int main(int ac, char **av)
   LOG_OK(" num dielectric spheres: " << dielectricSpheres.size());
   LOG_OK(" num metal spheres     : " << metalSpheres.size());
 
-  QApplication app(ac,av);
-
   Viewer viewer;
   viewer.camera.setOrientation(init_lookFrom,
                                init_lookAt,
@@ -628,9 +626,7 @@ int main(int ac, char **av)
   viewer.enableFlyMode();
   viewer.enableInspectMode(/* the big sphere in the middle: */
                            owl::box3f(vec3f(-1,0,-1),vec3f(1,2,1)));
-  viewer.show();
-  
-  return app.exec();
+  viewer.showAndRun();
 
   LOG("destroying devicegroup ...");
   owlContextDestroy(viewer.context);

@@ -24,7 +24,7 @@
 // our device-side data structures
 #include "deviceCode.h"
 // viewer base class, for window and user interaction
-#include "qtOWL/OWLViewer.h"
+#include "owlViewer/OWLViewer.h"
 #include "owl/common/math/AffineSpace.h"
 #include <random>
 
@@ -188,7 +188,7 @@ OWLGroup createBox(OWLContext context,
 }
 
 
-struct Viewer : public qtOWL::OWLViewer
+struct Viewer : public owl::viewer::OWLViewer
 {
   Viewer();
   
@@ -394,20 +394,16 @@ int main(int ac, char **av)
 {
   LOG("owl::ng example '" << av[0] << "' starting up");
 
-  QApplication app(ac,av);
-
   Viewer viewer;
   viewer.camera.setOrientation(init_lookFrom,
                                init_lookAt,
                                init_lookUp,
-                               qtOWL::toDegrees(acosf(init_cosFovy)));
+                               owl::viewer::toDegrees(acosf(init_cosFovy)));
   viewer.enableFlyMode();
   viewer.enableInspectMode(owl::box3f(vec3f(-1.f),vec3f(+1.f)));
 
   // ##################################################################
   // now that everything is ready: launch it ....
   // ##################################################################
-  viewer.show();
-
-  return app.exec();
+  viewer.showAndRun();
 }

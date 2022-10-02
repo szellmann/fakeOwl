@@ -24,12 +24,12 @@
 // our device-side data structures
 #include "deviceCode.h"
 // viewer base class, for window and user interaction
-#include "qtOWL/InspectMode.h"
-#include "qtOWL/OWLViewer.h"
+#include "owlViewer/InspectMode.h"
+#include "owlViewer/OWLViewer.h"
 #include "owl/common/math/LinearSpace.h"
 #include <random>
 
-//#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
 using namespace owl::common;
@@ -125,7 +125,7 @@ static linear3f Rotation(vec3f rotation)
   return mat;
 }
 
-struct Viewer : public qtOWL::OWLViewer
+struct Viewer : public owl::viewer::OWLViewer
 {
   enum Setup { SETUP_1984, SETUP_TRIANGLE };
 
@@ -680,19 +680,17 @@ int main(int ac, char **av)
     }
   }
 
-  QApplication app(ac,av);
-
   Viewer viewer(arg1=="-1984"? Viewer::SETUP_1984: Viewer::SETUP_TRIANGLE);
   if (viewer.setup==Viewer::SETUP_TRIANGLE) {
     viewer.camera.setOrientation(cameraTriangle::init_lookFrom,
                                  cameraTriangle::init_lookAt,
                                  cameraTriangle::init_lookUp,
-                                 qtOWL::toDegrees(acosf(cameraTriangle::init_cosFovy)));
+                                 owl::viewer::toDegrees(acosf(cameraTriangle::init_cosFovy)));
   } else {
     viewer.camera.setOrientation(camera1984::init_lookFrom,
                                  camera1984::init_lookAt,
                                  camera1984::init_lookUp,
-                                 qtOWL::toDegrees(acosf(camera1984::init_cosFovy)));
+                                 owl::viewer::toDegrees(acosf(camera1984::init_cosFovy)));
   }
   viewer.enableFlyMode();
   viewer.enableInspectMode(Viewer::Arcball,
@@ -701,7 +699,5 @@ int main(int ac, char **av)
   // ##################################################################
   // now that everything is ready: launch it ....
   // ##################################################################
-  viewer.show();
-
-  app.exec();
+  viewer.showAndRun();
 }

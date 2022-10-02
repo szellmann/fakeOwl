@@ -16,7 +16,7 @@
 
 #include "Renderer.h"
 
-#include "qtOWL/OWLViewer.h"
+#include "owlViewer/OWLViewer.h"
 
 // #include "glutViewer/OWLViewer.h"
 // #include "owlViewer/OWLViewer.h"
@@ -27,7 +27,7 @@
 // #include "ColorMapper.h"
 
 namespace dvr {
-  using qtOWL::SimpleCamera;
+  using owl::viewer::SimpleCamera;
 
   const int XF_ALPHA_COUNT = 128;
   
@@ -63,9 +63,9 @@ namespace dvr {
     exit(1);
   }
   
-  struct Viewer : public qtOWL::OWLViewer {
+  struct Viewer : public owl::viewer::OWLViewer {
   public:
-    typedef qtOWL::OWLViewer inherited;
+    typedef owl::viewer::OWLViewer inherited;
     
     Viewer(Renderer *renderer)
       : inherited("owlDVR Sample Viewer", cmdline.windowSize),
@@ -196,8 +196,6 @@ namespace dvr {
 
   extern "C" int main(int argc, char **argv)
   {
-    QApplication app(argc,argv);
-    
     std::string inFileName;
 
     // Viewer::initGlut(argc,argv);
@@ -314,9 +312,7 @@ namespace dvr {
     viewer->setWorldScale(1.1f*length(modelBounds.span()));
 
 
-    viewer->show();
-
-    return app.exec();
+    viewer->showAndRun();
   }
   
 }

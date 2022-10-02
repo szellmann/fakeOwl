@@ -25,7 +25,7 @@ add_executable(fake01-rayCasting
   )
 target_link_libraries(fake01-rayCasting
   ${fakeOwl_LIBRARY}
-  qtOWL
+  ${OWL_VIEWER_LIBRARIES}
   )
 
 

@@ -23,7 +23,7 @@ add_executable(int11-rotatingBoxes
   )
 target_link_libraries(int11-rotatingBoxes
   ${fakeOwl_LIBRARY}
-  qtOWL
+  ${OWL_VIEWER_LIBRARIES}
   )
 
 

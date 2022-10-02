@@ -3,6 +3,8 @@ project(fakeOwl)
 
 cmake_minimum_required(VERSION 3.1.3)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -25,7 +27,10 @@ if (FAKE_OWL_BUILD_SAMPLES)
   include(cmake/configure_fake_owl.cmake)
   add_subdirectory(${PROJECT_SOURCE_DIR}/submodules/cuteeOwl)
   include_directories(${QT_OWL_INCLUDES})
+  include_directories(${PROJECT_SOURCE_DIR})
+  include_directories(samples/common)
   include_directories(samples/common/3rdParty)
+  add_subdirectory(samples)
   add_subdirectory(samples/fake01-rayCasting)
   add_subdirectory(samples/int01-simpleTriangles)
   add_subdirectory(samples/int06-mixedGeometries)

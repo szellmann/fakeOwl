@@ -24,7 +24,6 @@ add_executable(int10-texturedTriangles
 target_link_libraries(int10-texturedTriangles
   ${fakeOwl_LIBRARY}
   ${OWL_VIEWER_LIBRARIES}
-  qtOWL
   )
 
 
