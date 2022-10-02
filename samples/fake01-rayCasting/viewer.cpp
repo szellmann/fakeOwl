@@ -49,7 +49,7 @@ namespace dvr {
       float fovy = 70;
     } camera;
     float dt = .5f;
-    vec2i windowSize  = /*default: one quarter of screen*/vec2i(0); //vec2i(1024,1024);
+    vec2i windowSize  = vec2i(1024,1024);
   } cmdline;
   
   void usage(const std::string &err)

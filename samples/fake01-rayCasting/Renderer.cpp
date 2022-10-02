@@ -17,7 +17,6 @@
 #include <fstream>
 #include "mesh.h"
 #include "Renderer.h"
-#include "qtOWL/ColorMaps.h"
 #include "deviceCode.h"
 #include <owl/owl_ext.h>
 #include <random>

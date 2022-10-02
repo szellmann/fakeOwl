@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "qtOWL/ColorMaps.h"
+#include <vector>
 #include "deviceCode.h"
 
 namespace dvr {
