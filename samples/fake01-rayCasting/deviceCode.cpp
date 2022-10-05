@@ -249,7 +249,7 @@ namespace dvr
           if (prd.primID >= 0)
             color = vec4f(vec3f(.2f+.8f*max(0.f,dot(-ray.direction,prd.gn))),1.f);
 #else
-            PRD prd = { (unsigned)-1 };
+            PRD prd = { 0.f, 0.f };
             // owl::traceRay(lp.world,ray,prd,
             //               OPTIX_RAY_FLAG_DISABLE_ANYHIT);
             const float ils_t0 = random();
