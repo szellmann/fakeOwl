@@ -3,8 +3,6 @@ fake[Owl](https://github.com/owl-project/owl)
 
 A CPU implementation of OWL. Very experimental :-)
 
-ATM only works on macOS, as my main dev machine is a Mac. I had it running on Linux, too, but 2-3 changes would be required. (At the very least, you'd have to replace `.dylib` with `.so` in [cmake/configure_fake_owl.cmake](/cmake/configure_fake_owl.cmake), but there's probably 1-2 more changes necessary that I just don't remember rn.)
-
 The CPU intersections are computed using the [Visionaray](https://github.com/szellmann/visionaray) submodule, but honestly intersections are less than 1% of this library. We could probably use Embree here w/o much effort, but I'm using Visionaray b/c it comes with a nice texture abstraction layer, and I'm also more familiar with Visionaray than with Embree, so I never bothered to replace it so far.
 
 Porting existing OWL code

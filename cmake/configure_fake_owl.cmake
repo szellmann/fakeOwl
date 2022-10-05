@@ -20,13 +20,20 @@ macro(fake_owl_compile_and_embed output_var file)
 
     set(embedded_file ${CMAKE_CURRENT_BINARY_DIR}/fakeOwl_${targetName}_embedded.c)
 
+    # Suffix used for dynamic libraries
+    if (APPLE)
+        set(suffixDL "dylib")
+    else()
+        set(suffixDL "so")
+    endif()
+
     file(
         WRITE ${embedded_file}
         "#ifdef __cplusplus
         extern \"C\" {
         #endif
 
-        const unsigned char ${output_var}[] = \"${CMAKE_CURRENT_BINARY_DIR}/lib${targetName}.dylib\";
+        const unsigned char ${output_var}[] = \"${CMAKE_CURRENT_BINARY_DIR}/lib${targetName}.${suffixDL}\";
 
         #ifdef __cplusplus
         }
