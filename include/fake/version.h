@@ -43,3 +43,15 @@
 
 #define FAKE_OWL_VERSION_GE(MAJOR, MINOR, PATCH)                    \
     !( FAKE_OWL_VERSION_LT(MAJOR, MINOR, PATCH) )
+
+
+//-------------------------------------------------------------------------------------------------
+// Base version of Optix-OWL, i.e., the version that the headers are based off
+//
+
+#define FAKE_OWL_BASE_OWL_VERSION_MAJOR 1
+#define FAKE_OWL_BASE_OWL_VERSION_MINOR 0
+#define FAKE_OWL_BASE_OWL_VERSION_PATCH 6
+#define FAKE_OWL_BASE_OWL_VERSION_COMMIT "ca8f7b7e72db600fa7f993cf6e4f471e5895983e"
+
+
