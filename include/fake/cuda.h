@@ -103,6 +103,40 @@ inline float __saturatef(const float &f) { return min(1.f,max(0.f,f)); }
 inline float __saturatef(const float &f) { return std::min(1.f,std::max(0.f,f)); }
 #endif
 
+namespace fake
+{
+    static thread_local cudaError_t lastCudaError = cudaSuccess;
+}
+
+__host__
+static cudaError_t cudaGetLastError(void)
+{
+    return fake::lastCudaError;
+}
+
+__host__
+static const char* cudaGetErrorString(cudaError_t err)
+{
+    if (err == cudaSuccess) {
+        return "success";
+    } else if (err == cudaErrorInvalidValue) {
+        return "invalid value";
+    } else if (err == cudaErrorMemoryAllocation) {
+        return "memory allocation";
+    } else if (err == cudaErrorInvalidPitchValue) {
+        return "invalid pitch value";
+    }
+
+    return "unknown error";
+}
+
+__host__ __device__
+static cudaError_t cudaDeviceSynchronize(void)
+{
+    // TODO
+    return cudaSuccess;
+}
+
 typedef struct {
     char x;
 } char1;
@@ -303,6 +337,12 @@ struct dim3 {
     operator uint3() const { return { x, y, z }; }
     unsigned x, y, z;
 };
+
+/* TODO: these are just dummies: */
+static thread_local dim3 threadIdx;
+static thread_local dim3 blockDim;
+static thread_local dim3 blockIdx;
+static thread_local dim3 gridDim;
 
 typedef struct {
 } CUstream;
