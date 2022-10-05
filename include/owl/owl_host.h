@@ -1,5 +1,5 @@
 // ======================================================================== //
-// Copyright 2019-2020 Ingo Wald                                            //
+// Copyright 2019-2021 Ingo Wald                                            //
 //                                                                          //
 // Licensed under the Apache License, Version 2.0 (the "License");          //
 // you may not use this file except in compliance with the License.         //
@@ -27,6 +27,12 @@
 # include <cstddef> 
 #endif
 
+/*! 'curves' support was introduced in optix 7.3, but we use the newer
+    api that came with 7.4 */
+#if OPTIX_VERSION >= 70400
+# define OWL_CAN_DO_CURVES 1
+#endif
+
 
 #if defined(_MSC_VER)
 #  define OWL_DLL_EXPORT __declspec(dllexport)
@@ -45,26 +51,11 @@
 # define OWL_IF_CPP(a) /* drop it */
 #endif
 
-//#if defined(OWL_DLL_INTERFACE)
-//#  ifdef owl_EXPORTS
-//#    define OWL_API OWL_DLL_EXPORT
-//#  else
-//#    define OWL_API OWL_DLL_IMPORT
-//#  endif
-//#else
 #  ifdef __cplusplus
 #    define OWL_API extern "C" OWL_DLL_EXPORT
 #  else
 #    define OWL_API /* bla */
 #  endif
-//#  define OWL_API /*static lib*/
-//#endif
-//#ifdef __cplusplus
-//# define OWL_API extern "C" OWL_DLL_EXPORT
-//#else
-//# define OWL_API /* bla */
-//#endif
-
 
 
 #define OWL_OFFSETOF(type,member)                       \
@@ -228,7 +219,8 @@ typedef enum
    // new naming, to be consistent with type OLWGeom (not OWLGeometry):
    OWL_GEOM_TRIANGLES=OWL_GEOMETRY_TRIANGLES,
    OWL_TRIANGLES=OWL_GEOMETRY_TRIANGLES,
-   OWL_GEOMETRY_HAIR
+   /*! maps to optix curves geometry */
+   OWL_GEOMETRY_CURVES
   }
   OWLGeomKind;
 
@@ -365,6 +357,16 @@ owlGetDeviceCount(OWLContext context);
 OWL_API OWLContext
 owlContextCreate(int32_t *requestedDeviceIDs OWL_IF_CPP(=nullptr),
                  int numDevices OWL_IF_CPP(=0));
+                 
+OWL_API void
+owlContextDestroy(OWLContext context);
+
+/*! tell the context/pipeline to enable the support for curves
+    geometries; this _must_ be called when using curves geometries. If
+    you want to use _both_ motion blur and curves, motion blur has to
+    be enabled _before_ enableing curves */
+OWL_API void
+owlEnableCurves(OWLContext _context);
 
 /*! enable motion blur for this context. this _has_ to be called
     before creating any geometries, groups, etc, and before the
@@ -423,10 +425,6 @@ OWL_API void
 owlSetMaxInstancingDepth(OWLContext context,
                          int32_t maxInstanceDepth);
 
-
-OWL_API void
-owlContextDestroy(OWLContext context);
-
 /* return the cuda stream associated with the given device. */
 OWL_API CUstream
 owlContextGetStream(OWLContext context, int deviceID);
@@ -438,10 +436,16 @@ owlContextGetOptixContext(OWLContext context, int deviceID);
 OWL_API OWLModule
 owlModuleCreate(OWLContext  context,
                 const char *ptxCode);
+                
+OWL_API void
+owlModuleRelease(OWLModule module);
 
 OWL_API OWLGeom
 owlGeomCreate(OWLContext  context,
               OWLGeomType type);
+              
+OWL_API void 
+owlGeomRelease(OWLGeom geometry);
 
 OWL_API OWLParams
 owlParamsCreate(OWLContext  context,
@@ -456,6 +460,9 @@ owlRayGenCreate(OWLContext  context,
                 size_t      sizeOfVarStruct,
                 OWLVarDecl *vars,
                 int         numVars);
+                
+OWL_API void 
+owlRayGenRelease(OWLRayGen rayGen);
 
 /*! creates a miss program with given function name (in given module)
     and given variables. Note due to backwards compatibility this will
@@ -489,11 +496,15 @@ owlMissProgSet(OWLContext  context,
   geometries. Every geom in this array must be a valid owl geometry
   created with owlGeomCreate, and must be of a OWL_GEOM_USER
   type.
+
+  \param buildFlags A combination of OptixBuildFlags.  The default
+  of 0 means to use OWL default build flags.
 */
 OWL_API OWLGroup
 owlUserGeomGroupCreate(OWLContext context,
                        size_t     numGeometries,
-                       OWLGeom   *arrayOfChildGeoms);
+                       OWLGeom   *arrayOfChildGeoms,
+                       unsigned int buildFlags OWL_IF_CPP(=0));
 
 
 // ------------------------------------------------------------------
@@ -507,25 +518,59 @@ owlUserGeomGroupCreate(OWLContext context,
   geometries. Every geom in this array must be a valid owl geometry
   created with owlGeomCreate, and must be of a OWL_GEOM_TRIANGLES
   type.
+
+  \param buildFlags A combination of OptixBuildFlags.  The default
+  of 0 means to use OWL default build flags.
 */
 OWL_API OWLGroup
 owlTrianglesGeomGroupCreate(OWLContext context,
                             size_t     numGeometries,
-                            OWLGeom   *initValues);
+                            OWLGeom   *initValues,
+                            unsigned int buildFlags OWL_IF_CPP(=0));
+
+
+
+// ------------------------------------------------------------------
+/*! create a new group (which handles the acceleration strucure) for
+  "curves" geometries.
+
+  \param numGeometries Number of geometries in this group, must be
+  non-zero.
+
+  \param arrayOfChildGeoms A array of 'numGeometries' child
+  geometries. Every geom in this array must be a valid owl geometry
+  created with owlGeomCreate, and must be of a OWL_GEOM_CURVES
+  type.
+
+  \param buildFlags A combination of OptixBuildFlags.  The default
+  of 0 means to use OWL default build flags.
+
+  Note that in order to use curves geometries you _have_ to call
+  owlEnableCurves() before curves are used; in particular, curves
+  _have_ to already be enabled when the pipeline gets compiled.
+*/
+OWL_API OWLGroup
+owlCurvesGeomGroupCreate(OWLContext context,
+                         size_t     numCurveGeometries,
+                         OWLGeom   *curveGeometries,
+                         unsigned int buildFlags OWL_IF_CPP(=0));
 
 // ------------------------------------------------------------------
 /*! create a new instance group with given number of instances. The
   child groups and their instance IDs and/or transforms can either
-  be specified "in bulk" as part of this call, or can be set lateron
-  with inviidaul calls to \see owlInstanceGroupSetChild and \see
+  be specified "in bulk" as part of this call, or can be set later on
+  with individual calls to \see owlInstanceGroupSetChild and \see
   owlInstanceGroupSetTransform. Note however, that in the case of
   having millions of instances in a group it will be *much* more
   efficient to set them in bulk open creation, than in millions of
   inidiviual API calls.
 
   Either or all of initGroups, initTranforms, or initInstanceIDs may
-  be null, in which case the values used for the 'th child will be a
-  null group, a unit transform, and 'i', respectively.
+  be null, in which case the values used for the 'th child will be an
+  uninitialized (invalid) group, a unit transform, and 'i', respectively.
+  If initGroups was null, make sure to set all of the child groups
+  with \see owlInstanceGroupSetChild before using this group, or
+  it will crash.
 */
 OWL_API OWLGroup
 owlInstanceGroupCreate(OWLContext context,
@@ -536,9 +581,11 @@ owlInstanceGroupCreate(OWLContext context,
                        /*! the initial list of owl groups to use by
                          the instances in this group; must be either
                          null, or an array of the size
-                         'numInstnaces', the i'th instnace in this
-                         gorup will be an instance o the i'th
-                         element in this list */
+                         'numInstances', the i'th instance in this
+                         group will be an instance of the i'th
+                         element in this list. If null, you must
+                         set all the children individually before
+                         using this group. */
                        const OWLGroup *initGroups      OWL_IF_CPP(= nullptr),
 
                        /*! instance IDs to use for the instance in
@@ -558,10 +605,16 @@ owlInstanceGroupCreate(OWLContext context,
                          null, or an array of size numInstnaces, of
                          the format specified */
                        const float    *initTransforms  OWL_IF_CPP(= nullptr),
-                       OWLMatrixFormat matrixFormat    OWL_IF_CPP(=OWL_MATRIX_FORMAT_OWL)
+                       OWLMatrixFormat matrixFormat    OWL_IF_CPP(=OWL_MATRIX_FORMAT_OWL),
+
+                       /*! A combination of OptixBuildFlags.  The default
+                         of 0 means to use OWL default build flags.*/
+                       unsigned int buildFlags OWL_IF_CPP(=0)
                        );
 
-
+                       
+OWL_API void
+owlGroupRelease(OWLGroup group);
 
 OWL_API void owlGroupBuildAccel(OWLGroup group);
 OWL_API void owlGroupRefitAccel(OWLGroup group);
@@ -572,9 +625,10 @@ OWL_API void owlGroupRefitAccel(OWLGroup group);
     version of the BVH (after it is done building), "memPeak" is peak
     memory used during construction. passing a NULL pointer to any
     value is valid; these values will get ignored. */
-OWL_API void owlGroupGetAccelSize(OWLGroup group,
-                                  size_t *p_memFinal,
-                                  size_t *p_memPeak);
+OWL_API void
+owlGroupGetAccelSize(OWLGroup group,
+                     size_t *p_memFinal,
+                     size_t *p_memPeak);
                                   
 OWL_API OWLGeomType
 owlGeomTypeCreate(OWLContext context,
@@ -603,15 +657,16 @@ owlTexture2DCreate(OWLContext context,
                      the next; '0' means 'size_x * sizeof(texel)' */
                    uint32_t linePitchInBytes       OWL_IF_CPP(=0)
                    );
+                   
+/*! destroy the given texture; after this call any accesses to the 
+   given texture are invalid */
+OWL_API void
+owlTexture2DDestroy(OWLTexture texture);
 
 /*! returns the device handle of the given texture for the given
     device ID. Useful for custom texture object arrays. */
 OWL_API CUtexObject
 owlTextureGetObject(OWLTexture texture, int deviceID);
-
-/*! destroy the given texture; after this call any accesses to the given texture are invalid */
-OWL_API void
-owlTexture2DDestroy(OWLTexture texture);
 
 /*! creates a device buffer where every device has its own local copy
   of the given buffer */
@@ -646,6 +701,19 @@ owlGraphicsBufferCreate(OWLContext             context,
                         size_t                 count,
                         cudaGraphicsResource_t resource);
 
+/*! OWL objects are reference-counted. This will release the
+  reference to the buffer, and free it if it was the last
+  reference. */
+OWL_API void
+owlBufferRelease(OWLBuffer buffer);
+
+/*! destroy the given buffer; this will both release the app's
+  refcount on the given buffer handle, *and* the buffer itself; ie,
+  even if some objects still hold variables that refer to the old
+  handle the buffer itself will be freed */
+OWL_API void 
+owlBufferDestroy(OWLBuffer buffer);
+
 OWL_API void
 owlGraphicsBufferMap(OWLBuffer buffer);
 
@@ -672,27 +740,49 @@ owlBufferResize(OWLBuffer buffer, size_t newItemCount);
 OWL_API size_t
 owlBufferSizeInBytes(OWLBuffer buffer);
 
-/*! destroy the given buffer; this will both release the app's
-  refcount on the given buffer handle, *and* the buffer itself; ie,
-  even if some objects still hold variables that refer to the old
-  handle the buffer itself will be freed */
-OWL_API void 
-owlBufferDestroy(OWLBuffer buffer);
+/*! uploads data from given host poiner to given device, uploading
+    'numItems' items to the destination array offset provided in
+    'destItemOffset'. 
 
-/*! uploads data from given host poiner to given device. offset refers
-    to the offset (in bytes) on the device. \param numbytes is the
-    number of bytes to upload; -1 meaning "full buffer" */
+    \note "Items" and "offset" in that context are computed relative
+    to the type that the given buffer was declared over; so for a
+    OWL_FLOAT buffer this function uploads numItems float values to a
+    float buffer; for a OWL_INT3 buffer it will upload numItems int3
+    values, etc. Similarly, the offset is also calculated in typed
+    items: i.e., a specified offset of N in a FLOAT2 buffer will
+    upload to byte offset N*sizeof(float2) (i.e., 8 bytes).
+
+    \param numItems number of (typed) items to upload. A value of
+    numItems==-1 means "upload as many as the buffer has been created
+    over"
+
+    \param destItemOffset offset in the target buffer (calculated in
+    number of typed _items_, not _bytes_!). I.e., a offset value of 0
+    will upload to the beginning of the buffer, a offset value of N
+    will upload with an offset of N*sizeof(T) bytes (where T is the
+    type that the buffer was declared over)
+*/
 OWL_API void 
 owlBufferUpload(OWLBuffer buffer,
                 const void *hostPtr,
-                size_t offset OWL_IF_CPP(=0),
-                size_t numBytes OWL_IF_CPP(=size_t(-1)));
+                size_t destItemOffset OWL_IF_CPP(=0),
+                size_t numItems OWL_IF_CPP(=size_t(-1)));
+
+/*! clears a buffer in the sense that it sets the entire memory region
+    to zeroes. Note this is currently implemneted only for buffers of
+    copyable data (ie, not buffers of objects). */
+OWL_API void 
+owlBufferClear(OWLBuffer buffer);
 
 /*! executes an optix launch of given size, with given launch
   program. Note this is asynchronous, and may _not_ be
   completed by the time this function returns. */
 OWL_API void
 owlRayGenLaunch2D(OWLRayGen rayGen, int dims_x, int dims_y);
+
+/*! 3D-launch variant of \see owlRayGenLaunch2D */
+OWL_API void
+owlRayGenLaunch3D(OWLRayGen rayGen, int dims_x, int dims_y, int dims_z);
 
 /*! perform a raygen launch with launch parameters, in a *synchronous*
     way; it, by the time this function returns the launch is
@@ -702,12 +792,22 @@ OWL_API void
 owlLaunch2D(OWLRayGen rayGen, int dims_x, int dims_y,
             OWLParams params);
 
+/*! 3D launch variant of owlLaunch2D */
+OWL_API void
+owlLaunch3D(OWLRayGen rayGen, int dims_x, int dims_y, int dims_z,
+            OWLParams params);
+
 /*! perform a raygen launch with launch parameters, in a *A*synchronous
     way; it, this will only launch, but *NOT* wait for completion (see
     owlLaunchSync). Both rayGen and params must be valid handles; it is
     valid to have a empty params, but it may not be null */
 OWL_API void
 owlAsyncLaunch2D(OWLRayGen rayGen, int dims_x, int dims_y,
+                 OWLParams params);
+
+/*! 3D-launch equivalent of \see owlAsyncLaunch2D */
+OWL_API void
+owlAsyncLaunch3D(OWLRayGen rayGen, int dims_x, int dims_y, int dims_z,
                  OWLParams params);
 
 /*! perform a raygen launch with launch parameters, but only for a given device, 
@@ -751,6 +851,36 @@ OWL_API void owlTrianglesSetIndices(OWLGeom triangles,
                                     size_t stride,
                                     size_t offset);
 
+// ==================================================================
+// "Triangles" functions
+// ==================================================================
+
+/*! sets curve degree (1="linear", 2="quadratic b-spline", 3="cubic
+    b-spline"), as well as whether end-caps need to get added for
+    non-linear curves (linear curves always have end-caps, no matter
+    what this value is */
+OWL_API void owlCurvesSetDegree(OWLGeomType curvesGeomType,
+                                int     degree,
+                                bool    forceCaps);
+
+/*! sets the array of control points, and their associated curve
+    width. */
+OWL_API void owlCurvesSetControlPoints(OWLGeom curvesGeom,
+                                       int numControlPoints,
+                                       /*! buffer of (one vec3f per
+                                         control point) that
+                                         specifies curve width */
+                                       OWLBuffer vertices,
+                                       /*! buffer of (one float per
+                                           control point) the curve
+                                           width of that control
+                                           point */
+                                       OWLBuffer widths);
+
+OWL_API void owlCurvesSetSegmentIndices(OWLGeom curvesGeom,
+                                        int numSegmentIndices,
+                                        OWLBuffer segmentIndices);
+                                       
 // -------------------------------------------------------
 // group/hierarchy creation and setting
 // -------------------------------------------------------
@@ -823,17 +953,6 @@ OWL_API void
 owlGeomSetPrimCount(OWLGeom geom,
                     size_t  primCount);
 
-
-// -------------------------------------------------------
-// Release for the various types
-// -------------------------------------------------------
-OWL_API void owlGeomRelease(OWLGeom geometry);
-OWL_API void owlVariableRelease(OWLVariable variable);
-OWL_API void owlModuleRelease(OWLModule module);
-OWL_API void owlBufferRelease(OWLBuffer buffer);
-OWL_API void owlRayGenRelease(OWLRayGen rayGen);
-OWL_API void owlGroupRelease(OWLGroup group);
-
 // -------------------------------------------------------
 // VariableGet for the various types
 // -------------------------------------------------------
@@ -852,6 +971,9 @@ owlMissProgGetVariable(OWLMissProg geom,
 OWL_API OWLVariable
 owlParamsGetVariable(OWLParams object,
                      const char *varName);
+                     
+OWL_API void
+owlVariableRelease(OWLVariable variable);
 
 // -------------------------------------------------------
 // VariableSet for different variable types

@@ -329,7 +329,8 @@ owlGeomSetPrimCount(OWLGeom obj,
 OWL_API OWLGroup
 owlUserGeomGroupCreate(OWLContext context,
                        size_t     numGeometries,
-                       OWLGeom   *arrayOfChildGeoms)
+                       OWLGeom   *arrayOfChildGeoms,
+                       unsigned   buildFlags)
 {
     Context* ctx = (Context*)context;
     return (OWLGroup)ctx->createUserGeomGroup(numGeometries, arrayOfChildGeoms);
@@ -338,7 +339,8 @@ owlUserGeomGroupCreate(OWLContext context,
 OWL_API OWLGroup
 owlTrianglesGeomGroupCreate(OWLContext context,
                             size_t     numGeometries,
-                            OWLGeom   *initValues)
+                            OWLGeom   *initValues,
+                            unsigned   buildFlags)
 {
     Context* ctx = (Context*)context;
     return (OWLGroup)ctx->createTrianglesGeomGroup(numGeometries, initValues);
@@ -350,7 +352,8 @@ owlInstanceGroupCreate(OWLContext context,
                        const OWLGroup *initGroups,
                        const uint32_t *initInstanceIDs,
                        const float    *initTransforms,
-                       OWLMatrixFormat matrixFormat)
+                       OWLMatrixFormat matrixFormat,
+                       unsigned        buldFlags)
 {
     Context* ctx = (Context*)context;
     return (OWLGroup)ctx->createInstanceGroup(numInstances,
