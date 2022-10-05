@@ -2,11 +2,14 @@ macro(fake_owl_compile_and_embed output_var file)
 
     set(targetName ${file})
 
+    if (TARGET ${targetName})
+        message("Target ${targetName} exists. Creating unique name to satisfy cmake...")
+    endif()
+
     while (TARGET ${targetName})
-        message("Oupssss")
         set(targetName ${targetName}X)
     endwhile()
-        message(${targetName})
+    message("Adding target: ${targetName}")
 
     add_library(${targetName} SHARED ${file})
     # TODO: make this work:
