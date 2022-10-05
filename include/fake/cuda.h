@@ -4,6 +4,7 @@
 #if !defined(__aarch64__)
 #include <x86intrin.h>
 #endif
+#include <stddef.h>
 #include <stdint.h>
 
 #if !defined(__CUDACC__) && !defined(CUDARTAPI)
@@ -99,8 +100,12 @@ template <typename T> inline T min(const T& x, const T& y) { return x < y ? x : 
 template <typename T> inline T max(const T& x, const T& y) { return x < y ? y : x; }
 inline float __saturatef(const float &f) { return min(1.f,max(0.f,f)); }
 #else
-#include <algorithm>
-inline float __saturatef(const float &f) { return std::min(1.f,std::max(0.f,f)); }
+inline float __saturatef(const float &f)
+{
+    auto min = [](float x, float y) { return x < y ? x : y; };
+    auto max = [](float x, float y) { return x < y ? y : x; };
+    return min(1.f,max(0.f,f));
+}
 #endif
 
 namespace fake
