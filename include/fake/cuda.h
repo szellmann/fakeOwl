@@ -335,11 +335,13 @@ typedef struct {
 } double4;
 
 struct dim3 {
+#if defined(__cplusplus)
     dim3() = default;
     dim3(unsigned x) : x(x), y(1), z(1) {}
     dim3(unsigned x, unsigned y) : x(x), y(y), z(1) {}
     dim3(unsigned x, unsigned y, unsigned z) : x(x), y(y), z(z) {}
     operator uint3() const { return { x, y, z }; }
+#endif
     unsigned x, y, z;
 };
 
@@ -349,9 +351,26 @@ static thread_local dim3 blockDim;
 static thread_local dim3 blockIdx;
 static thread_local dim3 gridDim;
 
-typedef struct {
-} CUstream;
+/* Driver API typedefs */
+struct CUarray_st;
+typedef CUarray_st* CUarray;
 
+struct CUctx_st;
+typedef CUctx_st* CUcontext;
+
+typedef int CUdevice_v1;
+typedef CUdevice_v1 CUdevice;
+
+typedef unsigned CUdeviceptr_v2;
+typedef CUdeviceptr_v2 CUdeviceptr;
+
+struct CUstream_st;
+typedef CUstream_st* CUstream;
+
+struct CUevent_st;
+typedef CUevent_st* CUevent;
+
+/* runtime API typedefs */
 struct cudaGraphicsResource;
 typedef cudaGraphicsResource* cudaGraphicsResource_t;
 

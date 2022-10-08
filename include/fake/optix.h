@@ -14,21 +14,13 @@ typedef uint32_t OptixVisibilityMask;
 struct OptixDeviceContext_t;
 typedef struct OptixDeviceContext_t* OptixDeviceContext;
 
-owl::vec2i optixGetLaunchIndex();
-owl::vec2i optixGetLaunchDimensions();
-unsigned optixGetPrimitiveIndex();
-owl::vec2f optixGetTriangleBarycentrics();
-owl::vec3f optixTransformNormalFromObjectToWorldSpace(owl::vec3f normal);
-owl::vec3f optixGetWorldRayOrigin();
-owl::vec3f optixGetWorldRayDirection();
-owl::vec3f optixGetObjectRayOrigin();
-owl::vec3f optixGetObjectRayDirection();
-float optixGetRayTmin();
-float optixGetRayTmax();
-const void* optixGetSbtDataPointer();
-unsigned optixGetPayload_0();
-unsigned optixGetPayload_1();
-void optixTerminateRay();
+typedef enum {
+    OPTIX_SUCCESS,
+    OPTIX_ERROR_INVALID_VALUE,
+    OPTIX_CUDA_ERROR,
+    OPTIX_INTERNAL_ERROR,
+    OPTIX_ERROR_UNKNOWN,
+} OptixResult;
 
 typedef enum {
     OPTIX_PRIMITIVE_TYPE_CUSTOM,
@@ -49,6 +41,32 @@ typedef enum {
     OPTIX_RAY_FLAG_CULL_DISABLED_ANYHIT = 1u << 6,
     OPTIX_RAY_FLAG_CULL_ENFORCED_ANYHIT = 1u << 7,
 } OptixRayFlags;
+
+typedef void(*OptixLogCallback)(unsigned level,
+                                const char* tag,
+                                const char* message,
+                                void* cbdata);
+
+OptixResult optixDeviceContextSetLogCallback(OptixDeviceContext context,
+                                             OptixLogCallback   callbackFunction,
+                                             void*              callbackData,
+                                             unsigned           callbackLevel);
+
+owl::vec2i optixGetLaunchIndex();
+owl::vec2i optixGetLaunchDimensions();
+unsigned optixGetPrimitiveIndex();
+owl::vec2f optixGetTriangleBarycentrics();
+owl::vec3f optixTransformNormalFromObjectToWorldSpace(owl::vec3f normal);
+owl::vec3f optixGetWorldRayOrigin();
+owl::vec3f optixGetWorldRayDirection();
+owl::vec3f optixGetObjectRayOrigin();
+owl::vec3f optixGetObjectRayDirection();
+float optixGetRayTmin();
+float optixGetRayTmax();
+const void* optixGetSbtDataPointer();
+unsigned optixGetPayload_0();
+unsigned optixGetPayload_1();
+void optixTerminateRay();
 
 void optixTrace(OptixTraversableHandle handle,
                 float3 rayOrigin,
