@@ -1,9 +1,5 @@
 #include <algorithm>
 
-#include <visionaray/math/forward.h>
-#include <visionaray/math/matrix.h>
-#include <visionaray/math/vector.h>
-
 #include "Visionaray.h" // keep on top!
 #include "GeomGroup.h"
 #include "InstanceGroup.h"
@@ -49,13 +45,18 @@ namespace fake
         else
         {
             // Init with identities
-            visionaray::mat4x3 I = { visionaray::mat3::identity(), visionaray::vec3(0.f) };
+            static float I[12] = {
+                1.f, 0.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 0.f, 1.f,
+                0.f, 0.f, 0.f,
+            };
 
             float* data = transforms.data();
 
             for (std::size_t i = 0; i < numInstances; ++i)
             {
-                std::copy(I.data(), I.data() + 12, data);
+                std::copy(I, I + 12, data);
 
                 data += 12;
             }
@@ -90,11 +91,21 @@ namespace fake
         if (ownAccessor != nullptr)
         {
             // This node was optimized and we potentially have to undo this!
-            visionaray::mat4x3 I{ visionaray::mat3::identity(), visionaray::vec3(0.f) };
-            visionaray::mat4x3 m(trans);
+            static float I[12] = {
+                1.f, 0.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 0.f, 1.f,
+                0.f, 0.f, 0.f,
+            };
 
-            if (m != I)
-                undoOptimization();
+            for (int i = 0; i < 12; ++i)
+            {
+                if (trans[i] != I[i])
+                {
+                    undoOptimization();
+                    break;
+                }
+            }
         }
     }
 
@@ -107,7 +118,7 @@ namespace fake
             instanceBVHs[i] = instances[i]->getAccel();
         }
 
-        bvh->reset(instanceBVHs.data(), instIDs.data(), (visionaray::mat4x3*)transforms.data(), instanceBVHs.size());
+        bvh->reset(instanceBVHs.data(), instIDs.data(), transforms.data(), instanceBVHs.size());
         bvh->build();
     }
 
@@ -126,10 +137,24 @@ namespace fake
     {
         if (instances.size() == 1)
         {
-            visionaray::mat4x3 I{ visionaray::mat3::identity(), visionaray::vec3(0.f) };
-            visionaray::mat4x3 m(transforms.data());
+            static float I[12] = {
+                1.f, 0.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 0.f, 1.f,
+                0.f, 0.f, 0.f,
+            };
 
-            if (m == I)
+            bool matEqual = true;
+            for (int i = 0; i < 12; ++i)
+            {
+                if (transforms[i] != I[i])
+                {
+                    matEqual = false;
+                    break;
+                }
+            }
+
+            if (matEqual)
             {
                 fake::Traversable& traversable = fake::getTraversable(traversableHandle);
                 fake::Traversable& childTraversable = fake::getTraversable(

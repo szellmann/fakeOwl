@@ -252,12 +252,12 @@ namespace visionaray
         GroupBVH();
         GroupBVH(fake::UserGeom** userGeoms, std::size_t numUserGeoms);
         GroupBVH(fake::TrianglesGeom** triGeoms, std::size_t numTrianglesGeoms);
-        GroupBVH(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs);
+        GroupBVH(GroupBVH::SP* groupBVHs, unsigned* instIDs, float* transforms, std::size_t numGroupBVHs);
        ~GroupBVH();
 
         void reset(fake::UserGeom** userGeoms, std::size_t numUserGeoms);
         void reset(fake::TrianglesGeom** triGeoms, std::size_t numTrianglesGeoms);
-        void reset(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs);
+        void reset(GroupBVH::SP* groupBVHs, unsigned* instIDs, float* transforms, std::size_t numGroupBVHs);
 
         // A handle to retrieve an accessor to this BVH
         fake::TraversableHandle traversableHandle;

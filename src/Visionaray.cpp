@@ -47,7 +47,7 @@ namespace visionaray
         traversableHandle = registerTraversable(accessor);
     }
 
-    GroupBVH::GroupBVH(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs)
+    GroupBVH::GroupBVH(GroupBVH::SP* groupBVHs, unsigned* instIDs, float* transforms, std::size_t numGroupBVHs)
     {
         reset(groupBVHs, instIDs, transforms, numGroupBVHs);
 
@@ -80,7 +80,7 @@ namespace visionaray
         asTrianglesGeomGroup.numTrianglesGeoms = numTrianglesGeoms;
     }
 
-    void GroupBVH::reset(GroupBVH::SP* groupBVHs, unsigned* instIDs, mat4x3f* transforms, std::size_t numGroupBVHs)
+    void GroupBVH::reset(GroupBVH::SP* groupBVHs, unsigned* instIDs, float* transforms, std::size_t numGroupBVHs)
     {
         asInstanceGroup.bottomLevelBVHs = groupBVHs;
         asInstanceGroup.numBottomLevelBVHs = numGroupBVHs;
@@ -106,7 +106,7 @@ namespace visionaray
             }
         }
         else
-            std::copy(transforms, transforms + numGroupBVHs, asInstanceGroup.transforms.data());
+            std::copy((mat4x3*)transforms, (mat4x3*)transforms + numGroupBVHs, asInstanceGroup.transforms.data());
 
         asInstanceGroup.accessor = asInstanceGroup.data->ref();
     }
