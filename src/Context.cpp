@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cstddef>
-#include <thread>
 
 #include <owl/owl_host.h>
 
@@ -19,7 +18,6 @@
 namespace fake
 {
     Context::Context(int* deviceIDs, int numDevices)
-        : threadPool(std::thread::hardware_concurrency())
     {
     }
 
@@ -48,11 +46,6 @@ namespace fake
                 module->buildPrograms();
             }
         }
-    }
-
-    visionaray::thread_pool& Context::getThreadPool()
-    {
-        return threadPool;
     }
 
     void Context::setRayTypeCount(int cnt)

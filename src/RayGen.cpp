@@ -40,40 +40,35 @@ namespace fake
         // Update all traversables to have a pointer to the current module!
         traversablesSetCurrentModule(module);
 
-        parallel_for(
-            context->getThreadPool(),
-            tiled_range1d<unsigned>(0, dims, 256),
-            [=](range1d<unsigned> const& r)
+        context->backend.parallel_for(0, dims, 256,
+            [=](int i)
             {
-                for (unsigned i = r.begin(); i < r.end(); ++i)
-                {
-                    void (*entryPoint)();
-                    entryPoint = (void (*)())entryPointSym;
+                void (*entryPoint)();
+                entryPoint = (void (*)())entryPointSym;
 
-                    fake::ProgramState* (*fakePrepareRayGen)();
-                    fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
+                fake::ProgramState* (*fakePrepareRayGen)();
+                fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
 
-                    void (*fakeResetPreviousProgramState)();
-                    fakeResetPreviousProgramState
-                            = (void (*)())fakeResetPreviousProgramStateSym;
+                void (*fakeResetPreviousProgramState)();
+                fakeResetPreviousProgramState
+                        = (void (*)())fakeResetPreviousProgramStateSym;
 
-                    void (*fakeSetLaunchIndex)(int, int, int);
-                    fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
+                void (*fakeSetLaunchIndex)(int, int, int);
+                fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
 
-                    void (*fakeSetLaunchDims)(int, int, int);
-                    fakeSetLaunchDims = (void (*)(int, int, int))fakeSetLaunchDimsSym;
+                void (*fakeSetLaunchDims)(int, int, int);
+                fakeSetLaunchDims = (void (*)(int, int, int))fakeSetLaunchDimsSym;
 
 
-                    fake::ProgramState* state = fakePrepareRayGen();
-                    state->sbtPointer = this->dataPtr;
+                fake::ProgramState* state = fakePrepareRayGen();
+                state->sbtPointer = this->dataPtr;
 
-                    fakeSetLaunchDims(dims, 1, 1);
+                fakeSetLaunchDims(dims, 1, 1);
 
-                    fakeSetLaunchIndex(i, 0, 0);
-                    entryPoint();
+                fakeSetLaunchIndex(i, 0, 0);
+                entryPoint();
 
-                    fakeResetPreviousProgramState();
-                }
+                fakeResetPreviousProgramState();
             }
             );
 
@@ -102,42 +97,34 @@ namespace fake
         // Update all traversables to have a pointer to the current module!
         traversablesSetCurrentModule(module);
 
-        parallel_for(
-            context->getThreadPool(),
-            tiled_range2d<unsigned>(0, w, 16, 0, h, 16),
-            [=](range2d<unsigned> const& r)
+        context->backend.parallel_for(0, w, 16, 0, h, 16,
+            [=](int x, int y)
             {
-                for (unsigned y = r.cols().begin(); y < r.cols().end(); ++y)
-                {
-                    for (unsigned x = r.rows().begin(); x < r.rows().end(); ++x)
-                    {
-                        void (*entryPoint)();
-                        entryPoint = (void (*)())entryPointSym;
+                void (*entryPoint)();
+                entryPoint = (void (*)())entryPointSym;
 
-                        fake::ProgramState* (*fakePrepareRayGen)();
-                        fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
+                fake::ProgramState* (*fakePrepareRayGen)();
+                fakePrepareRayGen = (fake::ProgramState* (*)())fakePrepareRayGenSym;
 
-                        void (*fakeResetPreviousProgramState)();
-                        fakeResetPreviousProgramState
-                                = (void (*)())fakeResetPreviousProgramStateSym;
+                void (*fakeResetPreviousProgramState)();
+                fakeResetPreviousProgramState
+                        = (void (*)())fakeResetPreviousProgramStateSym;
 
-                        void (*fakeSetLaunchIndex)(int, int, int);
-                        fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
+                void (*fakeSetLaunchIndex)(int, int, int);
+                fakeSetLaunchIndex = (void (*)(int, int, int))fakeSetLaunchIndexSym;
 
-                        void (*fakeSetLaunchDims)(int, int, int);
-                        fakeSetLaunchDims = (void (*)(int, int, int))fakeSetLaunchDimsSym;
+                void (*fakeSetLaunchDims)(int, int, int);
+                fakeSetLaunchDims = (void (*)(int, int, int))fakeSetLaunchDimsSym;
 
 
-                        fake::ProgramState* state = fakePrepareRayGen();
-                        state->sbtPointer = this->dataPtr;
+                fake::ProgramState* state = fakePrepareRayGen();
+                state->sbtPointer = this->dataPtr;
 
-                        fakeSetLaunchDims(w, h, 1);
+                fakeSetLaunchDims(w, h, 1);
 
-                        fakeSetLaunchIndex(x, y, 0);
-                        entryPoint();
-                        fakeResetPreviousProgramState();
-                    }
-                }
+                fakeSetLaunchIndex(x, y, 0);
+                entryPoint();
+                fakeResetPreviousProgramState();
             }
             );
 
