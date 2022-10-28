@@ -10,8 +10,7 @@
 namespace fake
 {
     Buffer::Buffer(OWLDataType dataType, std::size_t numElems)
-        : dataPtr(new uint8_t[numElems * GetDataTypeInfo(dataType).sizeInBytes])
-        , dataType(dataType)
+        : dataType(dataType)
         , numElems(numElems)
     {
     }
@@ -25,6 +24,8 @@ namespace fake
     HostBuffer::HostBuffer(OWLDataType dataType, std::size_t numElems, const void* init)
         : Buffer(dataType, numElems)
     {
+        dataPtr = new uint8_t[numElems * GetDataTypeInfo(dataType).sizeInBytes];
+
         if (init != nullptr)
         {
             upload(init, 0, numElems * GetDataTypeInfo(dataType).sizeInBytes);
